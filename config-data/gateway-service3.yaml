@@ -1,0 +1,23 @@
+server:
+  port: 9090
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+    instance:
+      hostname: localhost
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE  # Usa el nombre tal cual aparece en Eureka
+          predicates:
+            - Path=/usuario/**
+
