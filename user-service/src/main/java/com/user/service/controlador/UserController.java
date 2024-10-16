@@ -44,4 +44,6 @@ public class UserController {
 		User nuevoUsuario = userService.save(usuario);
 		return ResponseEntity.ok(nuevoUsuario);
 	}
+	
+	
 }
