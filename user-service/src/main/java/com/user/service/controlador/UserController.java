@@ -30,7 +30,7 @@ public class UserController {
 		return ResponseEntity.ok(usuarios);
 	}
 	
-	@GetMapping("{/id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<User> obtenerUsuario(@PathVariable("id") int id){
 		 User usuario = userService.obtenerUsurario(id);
 		 if(usuario == null) {
