@@ -20,4 +20,8 @@ spring:
           uri: lb://USER-SERVICE  # Usa el nombre tal cual aparece en Eureka
           predicates:
             - Path=/usuario/**
+        - id: movie-service
+          uri: lb://MOVIE-SERVICE  # Usa el nombre tal cual aparece en Eureka
+          predicates:
+            - Path=/peliculas/**
 
