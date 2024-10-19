@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Portfolio</title>
+</head>
+<body>
+    <h1 th:text="${title}"></h1>
+    <p>Esta es la página principal de mi portfolio donde muestro mis proyectos.</p>
+
+    <!-- Aquí puedes agregar enlaces a otros servicios o secciones -->
+    <a th:href="@{/peliculas}">Ver Películas</a>
+    <a th:href="@{/contacto}">Contacto</a>
+
+</body>
+</html>
