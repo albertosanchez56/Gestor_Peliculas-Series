@@ -7,7 +7,7 @@ spring:
       uri: http://localhost:8081
 
   datasource:
-    url: jdbc:mysql://localhost:3306/pruebagestorpeliculas  # Cambia a la URL de tu base de datos
+    url: jdbc:mysql://localhost:3306/peliculasdb  # Cambia a la URL de tu base de datos
     username: root                               # Cambia por el usuario de tu base de datos
     password:                             # Cambia por la contraseña de tu base de datos
     driver-class-name: com.mysql.cj.jdbc.Driver
