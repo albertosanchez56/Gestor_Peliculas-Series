@@ -6,13 +6,15 @@
 	<title th:text="${title}">Portfolio</title>
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/index.css">
+	
+	<link rel="icon" type="image/png" href="imagenes/minilogo.png">
 </head>
 
 <body class="custom-body">
 	<header>
 		<nav>
 			<ul class="sidebar">
-				<li onclick=hideSidebar()><button class="botonNav2"><img class="logo2"
+				<li onclick=hideSidebar()><button class="botonNav"><img class="logo2"
 							src="imagenes/logo.png" /></button></li>
 
 				<li><button class="botonNav2">Inicio</button></li>
@@ -35,11 +37,11 @@
 			</div>
 			<div class="divsproductos">
 				<div class="product">
-					<img class="blur-in" src="imagenes/pulp.jpeg"
+					<img src="imagenes/pulp.jpeg"
 						alt="Producto"><!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
 					<div class="overlay">
-						<p class="title">Pulp fiction</p>
-						<p class="price"></p>
+						<p class="titleproducto">Pulp fiction</p>
+						<p class="descripcion">Las vidas de dos mafiosos, un boxeador, la esposa de un gánster y un par de bandidos se entrelazan en cuatro historias de violencia y redención.</p>
 					</div>
 				</div>
 				<div class="product">
