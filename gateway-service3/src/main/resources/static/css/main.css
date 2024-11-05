@@ -1,0 +1,78 @@
+* {
+    box-sizing: border-box;
+}
+
+.custom-body {
+	margin: 0;
+	font-family: "Bangers", system-ui;
+	font-weight: 400;
+	font-style: normal;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	background-color: #181818;
+	
+}
+header {
+	
+	margin: 0;
+}
+nav{
+	
+	background-color: #212121;
+	box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
+	margin: 0;
+	width: 100%;
+	list-style: none;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+nav ul li {
+	
+	height: 50px;
+	/* Mantén los elementos en línea */
+}
+
+nav ul li a {
+	height: 100%;
+	
+}
+
+/* Estilo para el elemento "Mi cuenta" */
+nav ul li:first-child {
+	margin-right: auto;
+	/*margin-left: auto;
+	/* Empuja este elemento hacia la derecha */
+}
+
+.botonNav2{
+	height: 100%;
+	display: block;
+    /* Ocupa toda la altura del elemento <li> */
+    border: none;
+    background-color: rgba(255,255,255,0);
+    color: white;
+    padding: 0 30px; /* Ajusta el relleno según sea necesario */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+}
+.logo2{
+	width: 30px; /* Establece el ancho de la imagen a 200 píxeles */
+    height: 30px;
+    
+}
+
+.botonNav2:hover{
+	background-color: rgba(255,255,255,0.2);
+	color:#D89C3A;
+}
+
+.botonNav2:disabled{
+	color: #4A4A4A;
+	background-color: rgba(255,255,255,0);
+	cursor: default;
+}
