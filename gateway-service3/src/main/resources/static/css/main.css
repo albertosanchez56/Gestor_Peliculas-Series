@@ -171,15 +171,23 @@ nav ul li:first-child {
   gap: 10px;
   width: 80vw; /* Ajusta según tu diseño */
   padding: 16px 0;
-  justify-content: center;
+  justify-content: flex-start;
+  list-style-type: none;
 }
 
 .carousel .item {
   flex: 0 0 16%; /* Para mostrar aproximadamente 6 productos a la vez */
   scroll-snap-align: start;
-  text-align: center;  
+  text-align: left; /* Cambiado de center a left */
+  background-color: #212121;
   border-radius: 8px;
   font-size: 0.9em;
+  color: white;
+  padding: 10px;
+}
+
+.carousel .item h3{
+  color: darkorange;
 }
 
 .carousel .item img {
@@ -203,3 +211,43 @@ button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+.footer {
+	margin-top: 20px;
+    background-color: #1c1c1c;
+    color: #f0f0f0;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.footer-logo h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff6f61;
+    margin-bottom: 15px;
+}
+
+.footer-nav,
+.footer-socials {
+    margin-bottom: 20px;
+}
+
+.footer-nav a,
+.footer-socials a {
+    margin: 0 15px;
+    color: #f0f0f0;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.footer-nav a:hover,
+.footer-socials a:hover {
+    color: #ff6f61;
+}
+
+.footer-copyright {
+    font-size: 14px;
+    color: #a0a0a0;
+}
+
