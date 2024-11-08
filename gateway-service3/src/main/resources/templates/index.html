@@ -2,107 +2,166 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<title th:text="${title}">Portfolio</title>
-	<link rel="stylesheet" href="css/main.css">
-	<link rel="stylesheet" href="css/index.css">
-	
-	<link rel="icon" type="image/png" href="imagenes/minilogo.png">
+<meta charset="UTF-8">
+<title th:text="${title}">Portfolio</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/index.css">
+
+
+<link rel="icon" type="image/png" href="imagenes/minilogo.png">
 </head>
 
 <body class="custom-body">
 	<header>
 		<nav>
 			<ul class="sidebar">
-				<li onclick=hideSidebar()><button class="botonNav"><img class="logo2"
-							src="imagenes/logo.png" /></button></li>
+				<li onclick=hideSidebar()><button class="botonNav">
+						<img class="logo2" src="imagenes/logo.png" />
+					</button></li>
 
 				<li><button class="botonNav2">Inicio</button></li>
 				<li><button onclick="location.href='/Comics'" class="botonNav2">Peliculas</button></li>
 				<li><button onclick="location.href='/Comics'" class="botonNav2">Favoritos</button></li>
-				<li><button onclick="location.href='/login'" class="botonNav2">Mi cuenta</button></li>
+				<li><button onclick="location.href='/login'" class="botonNav2">Mi
+						cuenta</button></li>
 			</ul>
 
 		</nav>
 	</header>
 	<main>
-			<section class="sectionindex">
-				<img src="imagenes/pulp.jpeg">
-				<img src="imagenes/regreso.jpg">
-				<img src="imagenes/akira.jpg">
-				<img src="imagenes/terminator.jpg">
-			</section>
-			<div class="titulos">
-				<h1>Mejor valorados</h1>
+		<section class="sectionindex">
+			<img src="imagenes/pulp.jpeg"> <img src="imagenes/regreso.jpg">
+			<img src="imagenes/akira.jpg"> <img
+				src="imagenes/terminator.jpg">
+		</section>
+		<div class="carousel-wrapper">
+			<div class="carousel-container">
+				<button id="prevBtn">◀</button>
+				<ul class="carousel">
+					<li class="item"><img src="imagenes/pulp.jpeg"
+						alt="Producto 1">
+						</li>
+					<li class="item"><img src="imagenes/akira.jpg"
+						alt="Producto 2">
+						</li>
+						<li class="item"><img src="imagenes/pulp.jpeg"
+						alt="Producto 1">
+						</li>
+					<li class="item"><img src="imagenes/akira.jpg"
+						alt="Producto 2">
+						</li>
+						<li class="item"><img src="imagenes/pulp.jpeg"
+						alt="Producto 1">
+						</li>
+					<li class="item"><img src="imagenes/akira.jpg"
+						alt="Producto 2">
+						</li>
+						<li class="item"><img src="imagenes/pulp.jpeg"
+						alt="Producto 1">
+						</li>
+					<li class="item"><img src="imagenes/akira.jpg"
+						alt="Producto 2">
+						</li>
+						<li class="item"><img src="imagenes/pulp.jpeg"
+						alt="Producto 1">
+						</li>
+					<li class="item"><img src="imagenes/akira.jpg"
+						alt="Producto 2">
+						</li>
+						<li class="item"><img src="imagenes/pulp.jpeg"
+						alt="Producto 1">
+						</li>
+					<li class="item"><img src="imagenes/akira.jpg"
+						alt="Producto 2">
+						</li>
+						<li class="item"><img src="imagenes/pulp.jpeg"
+						alt="Producto 1">
+						</li>
+					<li class="item"><img src="imagenes/akira.jpg"
+						alt="Producto 2">
+						</li>
+					
+					<!-- Más elementos del carrusel -->
+				</ul>
+				<button id="nextBtn">▶</button>
 			</div>
-			<div class="divsproductos">
-				<div class="product">
-					<img src="imagenes/pulp.jpeg"
-						alt="Producto"><!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
-					<div class="overlay">
-						<p class="titleproducto">Pulp fiction</p>
-						<p class="descripcion">Las vidas de dos mafiosos, un boxeador, la esposa de un gánster y un par de bandidos se entrelazan en cuatro historias de violencia y redención.</p>
-					</div>
+		</div>
+
+		<div class="titulos">
+			<h1>Mejor valorados</h1>
+		</div>
+		<div class="divsproductos">
+			<div class="product">
+				<img src="imagenes/pulp.jpeg" alt="Producto">
+				<!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
+				<div class="overlay">
+					<p class="titleproducto">Pulp fiction</p>
+					<p>⭐8,9/10</p>
+					<p class="descripcion">Las vidas de dos mafiosos, un boxeador,
+						la esposa de un gánster y un par de bandidos se entrelazan en
+						cuatro historias de violencia y redención.</p>
 				</div>
-				<div class="product">
-					<img class="blur-in" src="imagenes/inter.jpg"
-						alt="Producto"><!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
-					<div class="overlay">
-						<p class="title"></p>
-						<p class="price"></p>
-					</div>
-				</div>
-				<div class="product">
-					<img class="blur-in" src="imagenes/blade.jpg"
-						alt="Producto"><!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
-					<div class="overlay">
-						<p class="title"></p>
-						<p class="price"></p>
-					</div>
-				</div>
-				<div class="product">
-					<img class="blur-in" src="imagenes/akira.jpg"
-						alt="Producto"><!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
-					<div class="overlay">
-						<p class="title"></p>
-						<p class="price"></p>
-					</div>
-				</div>
-				<div class="product">
-					<img class="blur-in" src="imagenes/logan.jpg"
-						alt="Producto"><!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
-					<div class="overlay">
-						<p class="title"></p>
-						<p class="price"></p>
-					</div>
-				</div>
-				<div class="product">
-					<img class="blur-in" src="imagenes/taxi.jpg"
-						alt="Producto"><!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
-					<div class="overlay">
-						<p class="title"></p>
-						<p class="price"></p>
-					</div>
-				</div>
-				<div class="product">
-					<img class="blur-in" src="imagenes/terminator.jpg"
-						alt="Producto"><!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
-					<div class="overlay">
-						<p class="title"></p>
-						<p class="price"></p>
-					</div>
-				</div>
-				<div class="product">
-					<img class="blur-in" src="imagenes/regreso.jpg"
-						alt="Producto"><!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
-					<div class="overlay">
-						<p class="title"></p>
-						<p class="price"></p>
-					</div>
-				</div>
-				<!-- Repite lo mismo para los otros productos -->
 			</div>
+			<div class="product">
+				<img class="blur-in" src="imagenes/inter.jpg" alt="Producto">
+				<!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
+				<div class="overlay">
+					<p class="title"></p>
+					<p class="price"></p>
+				</div>
+			</div>
+			<div class="product">
+				<img class="blur-in" src="imagenes/blade.jpg" alt="Producto">
+				<!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
+				<div class="overlay">
+					<p class="title"></p>
+					<p class="price"></p>
+				</div>
+			</div>
+			<div class="product">
+				<img class="blur-in" src="imagenes/akira.jpg" alt="Producto">
+				<!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
+				<div class="overlay">
+					<p class="title"></p>
+					<p class="price"></p>
+				</div>
+			</div>
+			<div class="product">
+				<img class="blur-in" src="imagenes/logan.jpg" alt="Producto">
+				<!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
+				<div class="overlay">
+					<p class="title"></p>
+					<p class="price"></p>
+				</div>
+			</div>
+			<div class="product">
+				<img class="blur-in" src="imagenes/taxi.jpg" alt="Producto">
+				<!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
+				<div class="overlay">
+					<p class="title"></p>
+					<p class="price"></p>
+				</div>
+			</div>
+			<div class="product">
+				<img class="blur-in" src="imagenes/terminator.jpg" alt="Producto">
+				<!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
+				<div class="overlay">
+					<p class="title"></p>
+					<p class="price"></p>
+				</div>
+			</div>
+			<div class="product">
+				<img class="blur-in" src="imagenes/regreso.jpg" alt="Producto">
+				<!--‘Rorschach’, de Tom King y Jorge Fornés (ECC)-->
+				<div class="overlay">
+					<p class="title"></p>
+					<p class="price"></p>
+				</div>
+			</div>
+			<!-- Repite lo mismo para los otros productos -->
+		</div>
 	</main>
+	<script src="js/carousel.js"></script>
 </body>
 
 </html>
