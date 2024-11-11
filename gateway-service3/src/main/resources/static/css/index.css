@@ -54,3 +54,16 @@
 	padding-top: 10px;
 	padding-left: 10px;
 }
+
+.tituloscarrousel {
+	margin: auto;
+	/*background: linear-gradient(220.55deg, #4643DF 0%, #0B0A47 100%);*/
+	border-radius: 8px;
+	color: white;
+	width: 100%;
+	max-width: 1500px;
+	height: 20px;
+	margin-bottom: 40px;
+	margin-top: 20px;
+
+}
