@@ -149,61 +149,6 @@ nav ul li:first-child {
     max-height: 400px;
 }
 
-.carousel-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  /* Centra verticalmente si deseas */
-}
-
-.carousel-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: 100%; /* Usa el ancho completo disponible */
-  overflow: hidden;
-  padding: 0 5px;
-}
-
-.carousel {
-  display: flex;
-  overflow: hidden; /* Oculta los elementos que no están visibles */
-  scroll-snap-type: x mandatory;
-  gap: 10px;
-  width: 80vw; /* Ajusta según tu diseño */
-  padding: 16px 0;
-  justify-content: flex-start;
-  list-style-type: none;
-}
-
-.carousel .item {
-  flex: 0 0 16%; /* Para mostrar aproximadamente 6 productos a la vez */
-  scroll-snap-align: start;
-  text-align: left; /* Cambiado de center a left */
-  background-color: #212121;
-  border-radius: 8px;
-  font-size: 0.9em;
-  color: white;
-  padding: 10px;
-}
-
-
-
-.carousel .item h3{
-  color: darkorange;
-}
-
-.carousel .item img {
-  border-radius: 5px;
-  width: 100%;
-  height: auto;
-  max-height: 300px;
-}
-
-.carousel .item h3, .carousel .item p, .carousel .item span {
-  margin: 10px 0;
-}
 
 button {
   background-color: #333;
@@ -218,6 +163,16 @@ button {
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.peliculainfo {
+
+	max-width: 1500px;
+	margin: auto;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 270px);
+	gap: 37px;
+	position: relative;
 }
 
 /* Media query para tablets (pantallas medianas) */

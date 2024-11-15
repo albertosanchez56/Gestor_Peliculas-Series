@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title th:text="${title}">Portfolio</title>
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/peliculasinfo.css">
+
+
+
+	<link rel="icon" type="image/png" href="imagenes/minilogo.png">
+</head>
+
+<body class="custom-body">
+	<header>
+		<nav>
+			<ul class="sidebar">
+				<li onclick=hideSidebar()><button class="botonNav">
+						<img class="logo2" src="imagenes/logo.png" />
+					</button></li>
+
+				<li><button class="botonNav2">Inicio</button></li>
+				<li><button onclick="location.href='/Comics'" class="botonNav2">Peliculas</button></li>
+				<li><button onclick="location.href='/Comics'" class="botonNav2">Favoritos</button></li>
+				<li><button onclick="location.href='/login'" class="botonNav2">Mi
+						cuenta</button></li>
+			</ul>
+
+		</nav>
+	</header>
+	<main>
+
+		<div class="movie-details-container">
+			<header class="movie-header">
+				<h1 class="movie-title">Pulp fiction</h1>
+				<span class="movie-rating">⭐8,9/10</span>
+			</header>
+
+			<div class="movie-main-grid">
+				<!-- Columna de Imagen de Portada -->
+				<div class="movie-poster">
+					<img src="imagenes/pulp.jpeg" alt="Póster de la película">
+				</div>
+
+				<!-- Columna de Detalles de la Película -->
+				<div class="movie-info">
+					<p><strong>Género:</strong> Acción, Aventura</p>
+					<p><strong>Duración:</strong> 120 min</p>
+					<p><strong>Director:</strong> Nombre del Director</p>
+					<p><strong>Elenco:</strong> Actor 1, Actor 2, Actor 3</p>
+					<p><strong>Sinopsis:</strong> Breve descripción de la trama de la película...</p>
+				</div>
+			</div>
+
+			<!-- Sección de Opiniones de Usuarios -->
+			<section class="user-reviews">
+				<h2>Opiniones de Usuarios</h2>
+				<!-- Aquí se añadirían los comentarios de los usuarios -->
+			</section>
+		</div>
+
+
+	</main>
+	<footer class="footer">
+		<div class="footer-content">
+			<!-- Logo o nombre del sitio -->
+			<div class="footer-logo">
+				<h2>FilmScore</h2>
+			</div>
+
+			<!-- Enlaces de navegación -->
+			<nav class="footer-nav">
+				<a href="/about">Acerca de</a> <a href="/contact">Contacto</a> <a href="/terms">Términos</a> <a
+					href="/privacy">Privacidad</a>
+			</nav>
+
+			<!-- Redes sociales -->
+			<div class="footer-socials">
+				<a href="https://facebook.com" target="_blank">Facebook</a> <a href="https://twitter.com"
+					target="_blank">Twitter</a> <a href="https://instagram.com" target="_blank">Instagram</a>
+			</div>
+
+			<!-- Copyright -->
+			<div class="footer-copyright">
+				&copy;
+				<script>document.write(new Date().getFullYear())</script>
+				FilmScore. Todos los derechos reservados.
+			</div>
+		</div>
+
+
+	</footer>
+
+
+
+</body>
+
+</html>
