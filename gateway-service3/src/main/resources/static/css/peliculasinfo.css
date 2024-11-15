@@ -1,0 +1,127 @@
+.peliculainfo {
+	max-width: 1500px;
+	margin: auto;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 270px);
+	gap: 12px;
+	position: relative;
+}
+
+.pelicula {
+	
+    position: relative;
+    
+}
+.pelicula .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.pelicula:hover .overlay {
+    opacity: 1;
+    border-radius: 5px;
+}
+
+ p {
+    color: white;
+    margin: 0;
+}
+
+ .titleproducto {
+    font-weight: bold;
+    font-size: 40px;
+    color: darkorange;
+}
+
+.descripcion {
+    font-style: italic;
+}
+
+
+.peliculainfo > .pelicula > img {
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    max-height: 400px;
+}
+
+/* Estilos generales */
+.movie-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.movie-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.movie-title {
+  font-size: 2rem;
+  margin: 0;
+  color: #FFA500;
+}
+
+.movie-rating {
+  font-size: 1.2rem;
+  color: #FFA500; /* Ejemplo de color para calificación */
+}
+
+/* Grid principal */
+.movie-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+}
+
+.movie-poster img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.movie-info p {
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+/* Opiniones de usuarios */
+.user-reviews {
+  margin-top: 30px;
+}
+
+.user-reviews h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 768px) {
+  .movie-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .movie-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .movie-title {
+    font-size: 1.6rem;
+  }
+
+  .movie-rating {
+    font-size: 1rem;
+  }
+}
