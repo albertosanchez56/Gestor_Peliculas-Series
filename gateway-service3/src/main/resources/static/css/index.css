@@ -67,3 +67,9 @@
 	margin-top: 20px;
 
 }
+
+@media (min-width: 1900px) and (max-width: 2999px) {
+  .tituloscarrousel ,.titulos{
+    max-width: 2020px;
+  }
+}

@@ -214,6 +214,12 @@ button:disabled {
 	position: relative;
 }
 
+@media (min-width: 1900px) and (max-width: 2999px) {
+  .divsproductos {
+    max-width: 2020px;
+  }
+}
+
 /* Media query para tablets (pantallas medianas) */
 @media (max-width: 768px) {
   .carousel .item {
