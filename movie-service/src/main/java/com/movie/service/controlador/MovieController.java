@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.movie.service.Entidades.Director;
 import com.movie.service.Entidades.Movie;
+import com.movie.service.servicio.DirectorService;
 import com.movie.service.servicio.MovieService;
 
 @RestController
@@ -46,4 +48,16 @@ public class MovieController {
 		Movie nuevaPelicula = movieService.save(movie);
 		return ResponseEntity.ok(nuevaPelicula);
 	}
+	
+	@Autowired
+    private DirectorService directorService;
+
+	@PostMapping("/directores")
+    public ResponseEntity<String> guardarDirector(@RequestBody Director director) {
+        // Lógica para guardar el director en la base de datos
+        // Asumir que tienes un servicio que guarda el director
+        directorService.save(director);
+        return ResponseEntity.ok("Director guardado exitosamente");
+    }
+	
 }
