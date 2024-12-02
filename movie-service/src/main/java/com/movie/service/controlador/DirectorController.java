@@ -15,14 +15,5 @@ import com.movie.service.servicio.DirectorService;
 @RequestMapping("/directors")
 public class DirectorController {
 
-	@Autowired
-    private DirectorService directorService;
-
-	@PostMapping("/directores")
-    public ResponseEntity<String> guardarDirector(@RequestBody Director director) {
-        // Lógica para guardar el director en la base de datos
-        // Asumir que tienes un servicio que guarda el director
-        directorService.save(director);
-        return ResponseEntity.ok("Director guardado exitosamente");
-    }
+	
 }
