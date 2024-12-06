@@ -51,6 +51,15 @@ public class GatewayController {
 	        return "guardardirector";
 	    }
 	 
+	 @GetMapping("/AgregarGeneros")
+	    public String saveGenero(Model model) {
+	        // Agregar cualquier dato que necesites pasar a la vista
+	        model.addAttribute("title", "Bienvenido a mi portfolio");
+	        
+	        // Devolver el nombre de la vista Thymeleaf (index.html)
+	        return "guardargenero";
+	    }
+	 
 	/* @PostMapping("/movies/add")
 	    public String addDirector(String title) {
 	        // Usar Feign Client para enviar el dato al microservicio
