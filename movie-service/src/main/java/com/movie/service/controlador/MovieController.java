@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.movie.service.Entidades.Director;
+import com.movie.service.Entidades.Genre;
 import com.movie.service.Entidades.Movie;
 import com.movie.service.servicio.DirectorService;
+import com.movie.service.servicio.GenreService;
 import com.movie.service.servicio.MovieService;
 
 @RestController
@@ -22,6 +24,12 @@ public class MovieController {
 
 	@Autowired
 	private MovieService movieService;
+	
+	@Autowired
+    private DirectorService directorService;
+	
+	@Autowired
+	private GenreService genreService;
 	
 	@GetMapping
 	public ResponseEntity<List<Movie>> listarPeliculas(){
@@ -49,8 +57,7 @@ public class MovieController {
 		return ResponseEntity.ok(nuevaPelicula);
 	}
 	
-	@Autowired
-    private DirectorService directorService;
+	
 
 	@PostMapping("/directores")
     public ResponseEntity<String> guardarDirector(@RequestBody Director director) {
@@ -58,6 +65,14 @@ public class MovieController {
         // Asumir que tienes un servicio que guarda el director
         directorService.save(director);
         return ResponseEntity.ok("Director guardado exitosamente");
+    }
+	
+	@PostMapping("/generos")
+    public ResponseEntity<String> guardarGenero(@RequestBody Genre generos) {
+        // Lógica para guardar el director en la base de datos
+        // Asumir que tienes un servicio que guarda el director
+		genreService.save(generos);
+        return ResponseEntity.ok("Genero guardado exitosamente");
     }
 	
 }
