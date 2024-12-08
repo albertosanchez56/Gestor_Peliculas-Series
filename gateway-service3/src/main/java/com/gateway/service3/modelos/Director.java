@@ -2,26 +2,32 @@ package com.gateway.service3.modelos;
 
 public class Director {
 
-	private String name;
+    private Long id; // Agregar atributo id
+    private String name;
 
-	
-	public Director() {
-		super();
-	}
+    public Director() {
+        super();
+    }
 
-	public Director(String name) {
-		super();
-		this.name = name;
-	}
+    public Director(Long id, String name) {
+        super();
+        this.id = id;
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	
-	
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
