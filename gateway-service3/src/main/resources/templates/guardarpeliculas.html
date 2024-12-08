@@ -60,14 +60,15 @@
 
         <!-- Géneros -->
         <label for="genres">Géneros</label>
-        <select id="genres" name="genres[]" multiple required>
-            <option value="Action">Acción</option>
-            <option value="Comedy">Comedia</option>
-            <option value="Drama">Drama</option>
-            <option value="Horror">Terror</option>
-            <option value="Sci-Fi">Ciencia ficción</option>
-        </select>
-        <small>Puedes seleccionar múltiples géneros manteniendo presionada la tecla Ctrl o Cmd</small>
+			<select id="genres" name="genres[]" multiple required>
+   			<!-- Recorrer los géneros y mostrarlos como opciones -->
+    			<th:block th:each="genero : ${generos}">
+       			<option th:value="${genero.name}" th:text="${genero.name}"> <!-- Asegúrate de que 'name' sea la propiedad del género -->
+        		</option>
+    			</th:block>
+			</select>
+		<small>Puedes seleccionar múltiples géneros manteniendo presionada la tecla Ctrl o Cmd</small>
+
 
         <!-- Sinopsis -->
         <label for="synopsis">Sinopsis</label>

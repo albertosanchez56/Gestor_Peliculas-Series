@@ -86,4 +86,15 @@ public class MovieController {
         return ResponseEntity.ok("Genero guardado exitosamente");
     }
 	
+	@GetMapping("/mostrargeneros")
+	public ResponseEntity<List<Genre>> listarGeneros(){
+		List<Genre> generos = genreService.getAll();
+		
+		if(generos.isEmpty()) {
+			ResponseEntity.noContent().build();
+		}
+		
+		return ResponseEntity.ok(generos);
+	}
+	
 }
