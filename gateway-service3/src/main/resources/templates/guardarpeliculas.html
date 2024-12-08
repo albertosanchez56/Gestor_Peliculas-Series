@@ -8,7 +8,6 @@
 	<link rel="stylesheet" href="css/guardarpeliculas.css">
 
 
-
 	<link rel="icon" type="image/png" href="imagenes/minilogo.png">
 </head>
 
@@ -35,9 +34,9 @@
 	</header>
 	<main>
 
-		<h2>Agregar Película</h2>
+		<br>
     <form action="/movies/add" method="POST">
-		
+		<h2>Agregar Película</h2>
         <!-- Título -->
         <label for="title">Título</label>
         <input type="text" id="title" name="title" required placeholder="Ingresa el título de la película">
@@ -48,7 +47,12 @@
 
         <!-- Director -->
         <label for="director">Director</label>
-        <input type="text" id="director" name="director" required placeholder="Ingresa el nombre del director">
+    	<select id="director" name="directorId" required>
+        <option value="">Seleccione un director</option>
+        <th:block th:each="director : ${directores}">
+            <option th:value="${director.id}" th:text="${director.name}"></option>
+        </th:block>
+    	</select>
 
         <!-- Duración -->
         <label for="duration">Duración (minutos)</label>

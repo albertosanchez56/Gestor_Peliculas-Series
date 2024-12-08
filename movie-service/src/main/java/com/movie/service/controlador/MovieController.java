@@ -67,6 +67,17 @@ public class MovieController {
         return ResponseEntity.ok("Director guardado exitosamente");
     }
 	
+	@GetMapping("/mostrardirectores")
+	public ResponseEntity<List<Director>> listarDirectores(){
+		List<Director> directores = directorService.getAll();
+		
+		if(directores.isEmpty()) {
+			ResponseEntity.noContent().build();
+		}
+		
+		return ResponseEntity.ok(directores);
+	} 
+	
 	@PostMapping("/generos")
     public ResponseEntity<String> guardarGenero(@RequestBody Genre generos) {
         // Lógica para guardar el director en la base de datos
