@@ -11,6 +11,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.gateway.service3.client.MovieServiceClient;
 import com.gateway.service3.modelos.Director;
+import com.gateway.service3.modelos.Genre;
+
 import reactor.core.publisher.Mono;
 
 
@@ -20,7 +22,7 @@ public class GatewayController {
 	@Autowired
     private WebClient.Builder webClientBuilder;
 
-    private final String peliculasServiceUrl = "http://localhost:9090/peliculas/mostrardirectores";
+    private final String peliculasServiceUrl = "http://localhost:9090/peliculas";
 	
 	 @GetMapping("/Home")
 	    public String showIndex(Model model) {
@@ -36,18 +38,32 @@ public class GatewayController {
 	 
 	 @GetMapping("/AgregarPelicula")
 	 public Mono<String> savePelicula(Model model) {
-	     return webClientBuilder.build()
+	     // Obtener directores
+	     Mono<List<Director>> directoresMono = webClientBuilder.build()
 	         .get()
-	         .uri(peliculasServiceUrl) // Endpoint del microservicio
+	         .uri(peliculasServiceUrl + "/mostrardirectores") // Endpoint para obtener directores
 	         .retrieve()
 	         .bodyToFlux(Director.class)
-	         .collectList() // Convertir a lista reactiva
-	         .map(directores -> {
+	         .collectList();
+
+	     // Obtener géneros
+	     Mono<List<Genre>> generosMono = webClientBuilder.build()
+	         .get()
+	         .uri(peliculasServiceUrl + "/mostrargeneros") // Endpoint para obtener géneros
+	         .retrieve()
+	         .bodyToFlux(Genre.class)
+	         .collectList();
+
+	     // Combinar ambas solicitudes
+	     return Mono.zip(directoresMono, generosMono)
+	         .map(tuple -> {
 	             model.addAttribute("title", "Bienvenido a mi portfolio");
-	             model.addAttribute("directores", directores);
+	             model.addAttribute("directores", tuple.getT1());
+	             model.addAttribute("generos", tuple.getT2()); // Agregar los géneros al modelo
 	             return "guardarpeliculas"; // Nombre de la vista
 	         });
 	 }
+
 	 
 	 @GetMapping("/AgregarDirectores")
 	    public String saveDirector(Model model) {
