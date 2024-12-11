@@ -1,6 +1,8 @@
 package com.movie.service.controlador;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +20,11 @@ import com.movie.service.Entidades.Movie;
 import com.movie.service.servicio.DirectorService;
 import com.movie.service.servicio.GenreService;
 import com.movie.service.servicio.MovieService;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @RestController
 @RequestMapping("/peliculas")
-@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
 public class MovieController {
 
 	@Autowired
@@ -61,13 +64,18 @@ public class MovieController {
 	
 	
 
-	@PostMapping("/directores")
-    public ResponseEntity<String> guardarDirector(@RequestBody Director director) {
-        // Lógica para guardar el director en la base de datos
-        // Asumir que tienes un servicio que guarda el director
-        directorService.save(director);
-        return ResponseEntity.ok("Director guardado exitosamente");
-    }
+	@PostMapping("/mostrardirectores")
+	public ResponseEntity<Map<String, String>> guardarDirector(@RequestBody Director director) {
+	    // Guardar el director en la base de datos
+	    directorService.save(director);
+
+	    // Crear un mensaje de respuesta en formato JSON
+	    Map<String, String> response = new HashMap<>();
+	    response.put("mensaje", "Director guardado exitosamente");
+
+	    return ResponseEntity.ok(response);
+	}
+
 	
 	@GetMapping("/mostrardirectores")
 	public ResponseEntity<List<Director>> listarDirectores(){
