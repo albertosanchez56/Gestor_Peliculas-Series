@@ -7,9 +7,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,9 @@ import com.movie.service.servicio.DirectorService;
 import com.movie.service.servicio.GenreService;
 import com.movie.service.servicio.MovieService;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.http.HttpStatus; // Para HttpStatus.NOT_FOUND
+import org.springframework.web.server.ResponseStatusException; // Para ResponseStatusException
+
 
 @RestController
 @RequestMapping("/peliculas")
@@ -64,7 +69,7 @@ public class MovieController {
 	
 	
 
-	@PostMapping("/mostrardirectores")
+	@PostMapping("/guardardirectores")
 	public ResponseEntity<Map<String, String>> guardarDirector(@RequestBody Director director) {
 	    // Guardar el director en la base de datos
 	    directorService.save(director);
@@ -87,6 +92,45 @@ public class MovieController {
 		
 		return ResponseEntity.ok(directores);
 	} 
+	
+	@GetMapping("/directores/{id}")
+	public ResponseEntity<Director> obtenerDirectorPorId(@PathVariable int id) {
+	    Director director = directorService.obtenerDirector(id)
+	            .orElseThrow(() -> new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "No existe el director con el ID: " + id));
+	    return ResponseEntity.ok(director);
+	}
+	
+	@PutMapping("/directores/{id}")
+	public ResponseEntity<Director> actualizarDirector(@PathVariable int id, @RequestBody Director detallesDirector) {
+	    Director director = directorService.obtenerDirector(id)
+	            .orElseThrow(() -> new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "No existe el director con el ID: " + id));
+	    
+	    director.setName(detallesDirector.getName());
+	    
+	    Director directorActualizado = directorService.save(director);
+	    
+	    return ResponseEntity.ok(directorActualizado);
+	}
+	
+	@DeleteMapping("/directores/{id}")
+	public ResponseEntity<Map<String,Boolean>> borrarDirector(@PathVariable int id) {
+	    Director director = directorService.obtenerDirector(id)
+	            .orElseThrow(() -> new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "No existe el director con el ID: " + id));
+	    
+	    directorService.borrarDirector(director);
+	    
+	    
+	    Director directorActualizado = directorService.save(director);
+	    Map<String, Boolean> respuesta = new HashMap<>();
+        respuesta.put("eliminar",Boolean.TRUE);
+	    
+	    return ResponseEntity.ok(respuesta);
+	}
+	
+	
 	
 	@PostMapping("/generos")
     public ResponseEntity<String> guardarGenero(@RequestBody Genre generos) {
