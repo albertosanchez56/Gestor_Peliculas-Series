@@ -130,15 +130,17 @@ public class MovieController {
 	    return ResponseEntity.ok(respuesta);
 	}
 	
-	
-	
-	@PostMapping("/generos")
-    public ResponseEntity<String> guardarGenero(@RequestBody Genre generos) {
-        // Lógica para guardar el director en la base de datos
-        // Asumir que tienes un servicio que guarda el director
-		genreService.save(generos);
-        return ResponseEntity.ok("Genero guardado exitosamente");
-    }
+	@PostMapping("/guardargeneros")
+	public ResponseEntity<Map<String, String>> guardarGenero(@RequestBody Genre genero) {
+	    // Guardar el director en la base de datos
+	    genreService.save(genero);
+
+	    // Crear un mensaje de respuesta en formato JSON
+	    Map<String, String> response = new HashMap<>();
+	    response.put("mensaje", "Genero guardado exitosamente");
+
+	    return ResponseEntity.ok(response);
+	}
 	
 	@GetMapping("/mostrargeneros")
 	public ResponseEntity<List<Genre>> listarGeneros(){
@@ -150,5 +152,49 @@ public class MovieController {
 		
 		return ResponseEntity.ok(generos);
 	}
+	
+	@GetMapping("/generos/{id}")
+	public ResponseEntity<Genre> obtenerGenerosPorId(@PathVariable int id) {
+	    Genre genero = genreService.obtenerGenero(id)
+	            .orElseThrow(() -> new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "No existe el genero con el ID: " + id));
+	    return ResponseEntity.ok(genero);
+	}
+	
+	@PutMapping("/generos/{id}")
+	public ResponseEntity<Genre> actualizarGenero(@PathVariable int id, @RequestBody Genre detallesGenero) {
+	    Genre genero = genreService.obtenerGenero(id)
+	            .orElseThrow(() -> new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "No existe el genero con el ID: " + id));
+	    
+	    genero.setName(detallesGenero.getName());
+	    
+	    Genre generoActualizado = genreService.save(genero);
+	    
+	    return ResponseEntity.ok(generoActualizado);
+	}
+	
+	@DeleteMapping("/generos/{id}")
+	public ResponseEntity<Map<String,Boolean>> borrarGenero(@PathVariable int id) {
+	    Genre genero = genreService.obtenerGenero(id)
+	            .orElseThrow(() -> new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "No existe el genero con el ID: " + id));
+	    
+	    genreService.borrarGenero(genero);
+	    
+	    
+	    //Genre generoActualizado = genreService.save(genero);
+	    Map<String, Boolean> respuesta = new HashMap<>();
+        respuesta.put("eliminar",Boolean.TRUE);
+	    
+	    return ResponseEntity.ok(respuesta);
+	}
+	
+	@GetMapping("/generosexists/{name}")
+    public ResponseEntity<Boolean> checkIfNameExists(@PathVariable String name) {
+        boolean exists = genreService.existsByName(name);
+        return ResponseEntity.ok(exists);
+    }
+	
 	
 }
