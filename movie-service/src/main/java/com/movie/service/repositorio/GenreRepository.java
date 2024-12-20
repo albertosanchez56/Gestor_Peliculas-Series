@@ -6,4 +6,5 @@ import com.movie.service.Entidades.Genre;
 
 public interface GenreRepository extends JpaRepository<Genre, Integer>{
 
+	boolean existsByName(String name);
 }
