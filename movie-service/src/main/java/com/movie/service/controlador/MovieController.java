@@ -41,7 +41,7 @@ public class MovieController {
 	@Autowired
 	private GenreService genreService;
 	
-	@GetMapping
+	/*@GetMapping
 	public ResponseEntity<List<Movie>> listarPeliculas(){
 		List<Movie> peliculas = movieService.getAll();
 		
@@ -65,8 +65,71 @@ public class MovieController {
 	public ResponseEntity<Movie> guardarPelicula(@RequestBody Movie movie){
 		Movie nuevaPelicula = movieService.save(movie);
 		return ResponseEntity.ok(nuevaPelicula);
+	}*/
+	@PostMapping("/guardarpeliculas")
+	public ResponseEntity<Map<String, String>> guardarPeliculas(@RequestBody Movie movie) {
+	    // Guardar el director en la base de datos
+		movieService.save(movie);
+
+	    // Crear un mensaje de respuesta en formato JSON
+	    Map<String, String> response = new HashMap<>();
+	    response.put("mensaje", "Pelicula guardado exitosamente");
+
+	    return ResponseEntity.ok(response);
+	}
+
+	
+	@GetMapping("/mostrarpeliculas")
+	public ResponseEntity<List<Movie>> listarPeliculas(){
+		List<Movie> peliculas = movieService.getAll();
+		
+		if(peliculas.isEmpty()) {
+			ResponseEntity.noContent().build();
+		}
+		
+		return ResponseEntity.ok(peliculas);
+	} 
+	
+	@GetMapping("/peliculas/{id}")
+	public ResponseEntity<Movie> obtenerPeliculaPorId(@PathVariable int id) {
+		Movie pelicula = movieService.obtenerPelicula(id)
+	            .orElseThrow(() -> new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "No existe la pelicula con el ID: " + id));
+	    return ResponseEntity.ok(pelicula);
 	}
 	
+	@PutMapping("/peliculas/{id}")
+	public ResponseEntity<Movie> actualizarPelicula(@PathVariable int id, @RequestBody Movie detallesPelicula) {
+		Movie movie = movieService.obtenerPelicula(id)
+	            .orElseThrow(() -> new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "No existe la pelicula con el ID: " + id));
+	    
+		movie.setTitle(detallesPelicula.getTitle());
+	    movie.setDescription(detallesPelicula.getDescription());
+	    movie.setReleaseDate(detallesPelicula.getReleaseDate());
+	    movie.setDirector(detallesPelicula.getDirector());
+	    movie.setGenres(detallesPelicula.getGenres());
+	    
+		Movie peliculaActualizado = movieService.save(movie);
+	    
+	    return ResponseEntity.ok(peliculaActualizado);
+	}
+	
+	@DeleteMapping("/peliculas/{id}")
+	public ResponseEntity<Map<String,Boolean>> borrarPelicula(@PathVariable int id) {
+		Movie movie = movieService.obtenerPelicula(id)
+	            .orElseThrow(() -> new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "No existe la pelicula con el ID: " + id));
+	    
+		movieService.borrarPelicula(movie);
+	    
+	    
+		Movie peliculaActualizado = movieService.save(movie);
+	    Map<String, Boolean> respuesta = new HashMap<>();
+        respuesta.put("eliminar",Boolean.TRUE);
+	    
+	    return ResponseEntity.ok(respuesta);
+	}
 	
 
 	@PostMapping("/guardardirectores")
