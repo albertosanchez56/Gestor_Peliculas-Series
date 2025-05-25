@@ -3,6 +3,12 @@ package com.movie.service.Entidades;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+
 @Entity
 public class Director {
 
@@ -13,7 +19,8 @@ public class Director {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "director")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "director")
+    //@JsonManagedReference("director-movies")
     private List<Movie> movies;
     
     

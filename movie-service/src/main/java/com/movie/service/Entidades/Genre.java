@@ -3,6 +3,12 @@ package com.movie.service.Entidades;
 import jakarta.persistence.*;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+
 @Entity
 public class Genre {
 
@@ -14,6 +20,7 @@ public class Genre {
     private String name;
 
     @ManyToMany(mappedBy = "genres")
+    //@JsonBackReference("movie-genres")
     private Set<Movie> movies;
 
     

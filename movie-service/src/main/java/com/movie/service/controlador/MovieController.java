@@ -1,8 +1,10 @@
 package com.movie.service.controlador;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.movie.service.DTO.DirectorDTO;
+import com.movie.service.DTO.GenreDTO;
+import com.movie.service.DTO.MovieDTO;
 import com.movie.service.Entidades.Director;
 import com.movie.service.Entidades.Genre;
 import com.movie.service.Entidades.Movie;
@@ -79,7 +84,7 @@ public class MovieController {
 	}
 
 	
-	@GetMapping("/mostrarpeliculas")
+	/*@GetMapping("/mostrarpeliculas")
 	public ResponseEntity<List<Movie>> listarPeliculas(){
 		List<Movie> peliculas = movieService.getAll();
 		
@@ -88,7 +93,40 @@ public class MovieController {
 		}
 		
 		return ResponseEntity.ok(peliculas);
-	} 
+	} */
+	
+	 @GetMapping("/mostrarpeliculas")
+	    public ResponseEntity<List<MovieDTO>> listarPeliculas() {
+	        // Asumimos que getAllWithGenresAndDirector() hace un FETCH JOIN de géneros y director
+	        List<Movie> peliculas = movieService.getAll();
+
+	        if (peliculas.isEmpty()) {
+	            return ResponseEntity.noContent().build();
+	        }
+
+	        List<MovieDTO> dtos = peliculas.stream().map(m -> {
+	            // Mapeo del director
+	            Director dir = m.getDirector();
+	            DirectorDTO dirDto = new DirectorDTO(dir.getId(), dir.getName());
+
+	            // Mapeo de géneros
+	            List<GenreDTO> genreDtos = m.getGenres().stream()
+	                .map(g -> new GenreDTO(g.getId(), g.getName()))
+	                .collect(Collectors.toList());
+
+	            // Construcción del MovieDTO
+	            return new MovieDTO(
+	                m.getId(),
+	                m.getTitle(),
+	                m.getDescription(),
+	                m.getReleaseDate(),
+	                dirDto,
+	                genreDtos
+	            );
+	        }).collect(Collectors.toList());
+
+	        return ResponseEntity.ok(dtos);
+	    }
 	
 	@GetMapping("/peliculas/{id}")
 	public ResponseEntity<Movie> obtenerPeliculaPorId(@PathVariable int id) {
@@ -124,7 +162,7 @@ public class MovieController {
 		movieService.borrarPelicula(movie);
 	    
 	    
-		Movie peliculaActualizado = movieService.save(movie);
+		//Movie peliculaActualizado = movieService.save(movie);
 	    Map<String, Boolean> respuesta = new HashMap<>();
         respuesta.put("eliminar",Boolean.TRUE);
 	    
@@ -145,7 +183,7 @@ public class MovieController {
 	}
 
 	
-	@GetMapping("/mostrardirectores")
+	/*@GetMapping("/mostrardirectores")
 	public ResponseEntity<List<Director>> listarDirectores(){
 		List<Director> directores = directorService.getAll();
 		
@@ -154,7 +192,46 @@ public class MovieController {
 		}
 		
 		return ResponseEntity.ok(directores);
-	} 
+	} */
+	
+	@GetMapping("/mostrardirectores")
+    public ResponseEntity<List<DirectorDTO>> listarDirectores() {
+        // Asegúrate de que este método usa JOIN FETCH para traer también las películas y sus géneros
+        List<Director> directores = directorService.getAll();
+
+        if (directores.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<DirectorDTO> dtos = directores.stream().map(d -> {
+            // Mapear cada película a MovieDTO
+            List<MovieDTO> movies = d.getMovies().stream().map(m -> {
+                // Mapear géneros de la película
+                List<GenreDTO> genres = m.getGenres().stream()
+                    .map(g -> new GenreDTO(g.getId(), g.getName()))
+                    .toList();
+
+                return new MovieDTO(
+                    m.getId(),
+                    m.getTitle(),
+                    m.getDescription(),
+                    m.getReleaseDate(),
+                    /* opcional: podrías omitir el director aquí ya que estamos dentro de él */
+                    null,
+                    genres
+                );
+            }).toList();
+
+            // Construir el DirectorDTO
+            return new DirectorDTO(
+                d.getId(),
+                d.getName(),
+                movies
+            );
+        }).toList();
+
+        return ResponseEntity.ok(dtos);
+    }
 	
 	@GetMapping("/directores/{id}")
 	public ResponseEntity<Director> obtenerDirectorPorId(@PathVariable int id) {
@@ -186,7 +263,7 @@ public class MovieController {
 	    directorService.borrarDirector(director);
 	    
 	    
-	    Director directorActualizado = directorService.save(director);
+	   // Director directorActualizado = directorService.save(director);
 	    Map<String, Boolean> respuesta = new HashMap<>();
         respuesta.put("eliminar",Boolean.TRUE);
 	    
@@ -205,7 +282,7 @@ public class MovieController {
 	    return ResponseEntity.ok(response);
 	}
 	
-	@GetMapping("/mostrargeneros")
+	/*@GetMapping("/mostrargeneros")
 	public ResponseEntity<List<Genre>> listarGeneros(){
 		List<Genre> generos = genreService.getAll();
 		
@@ -214,7 +291,41 @@ public class MovieController {
 		}
 		
 		return ResponseEntity.ok(generos);
-	}
+	}*/
+	
+	 @GetMapping("/mostrargeneros")
+	    public ResponseEntity<List<GenreDTO>> listarGeneros() {
+	        // Usamos un método que fetch-ea también las películas y sus directores
+	        List<Genre> generos = genreService.getAll();
+
+	        if (generos.isEmpty()) {
+	            return ResponseEntity.noContent().build();
+	        }
+
+	        List<GenreDTO> dtos = generos.stream().map(g -> {
+	            // Mapear cada Movie a un MovieDTO sin lista de géneros para evitar ciclos
+	            List<MovieDTO> movies = g.getMovies().stream().map(m -> {
+	                Director d = m.getDirector();
+	                DirectorDTO dirDto = new DirectorDTO(d.getId(), d.getName());
+	                return new MovieDTO(
+	                    m.getId(),
+	                    m.getTitle(),
+	                    m.getDescription(),
+	                    m.getReleaseDate(),
+	                    dirDto,
+	                    /* omitimos genres aquí */ Collections.emptyList()
+	                );
+	            }).toList();
+
+	            return new GenreDTO(
+	                g.getId(),
+	                g.getName(),
+	                movies
+	            );
+	        }).toList();
+
+	        return ResponseEntity.ok(dtos);
+	    }
 	
 	@GetMapping("/generos/{id}")
 	public ResponseEntity<Genre> obtenerGenerosPorId(@PathVariable int id) {
