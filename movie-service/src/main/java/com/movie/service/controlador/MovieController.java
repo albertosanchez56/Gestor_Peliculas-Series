@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,31 +100,33 @@ public class MovieController {
 	    public ResponseEntity<List<MovieDTO>> listarPeliculas() {
 	        // Asumimos que getAllWithGenresAndDirector() hace un FETCH JOIN de géneros y director
 	        List<Movie> peliculas = movieService.getAll();
-
 	        if (peliculas.isEmpty()) {
 	            return ResponseEntity.noContent().build();
 	        }
 
 	        List<MovieDTO> dtos = peliculas.stream().map(m -> {
-	            // Mapeo del director
-	            Director dir = m.getDirector();
-	            DirectorDTO dirDto = new DirectorDTO(dir.getId(), dir.getName());
-
-	            // Mapeo de géneros
-	            List<GenreDTO> genreDtos = m.getGenres().stream()
+	            // --- 1) Manejo seguro del director ---
+	            Director d = m.getDirector();
+	            DirectorDTO dirDto = null;
+	            if (d != null) {
+	                dirDto = new DirectorDTO(d.getId(), d.getName());
+	            }
+	            // --- 2) Mapeo de géneros (igual que antes) ---
+	            List<GenreDTO> genreDtos = m.getGenres()
+	                .stream()
 	                .map(g -> new GenreDTO(g.getId(), g.getName()))
-	                .collect(Collectors.toList());
+	                .toList();
 
-	            // Construcción del MovieDTO
+	            // --- 3) Construcción del DTO ---
 	            return new MovieDTO(
 	                m.getId(),
 	                m.getTitle(),
 	                m.getDescription(),
 	                m.getReleaseDate(),
-	                dirDto,
+	                dirDto,      // puede ser null si no hay director
 	                genreDtos
 	            );
-	        }).collect(Collectors.toList());
+	        }).toList();
 
 	        return ResponseEntity.ok(dtos);
 	    }
@@ -233,7 +236,7 @@ public class MovieController {
         return ResponseEntity.ok(dtos);
     }
 	
-	@GetMapping("/directores/{id}")
+	/*@GetMapping("/directores/{id}")
 	public ResponseEntity<Director> obtenerDirectorPorId(@PathVariable int id) {
 	    Director director = directorService.obtenerDirector(id)
 	            .orElseThrow(() -> new ResponseStatusException(
@@ -252,11 +255,29 @@ public class MovieController {
 	    Director directorActualizado = directorService.save(director);
 	    
 	    return ResponseEntity.ok(directorActualizado);
-	}
+	}*/
+	
+	@GetMapping("/directores/{id}")
+	  public ResponseEntity<DirectorDTO> obtenerDirectorPorId(@PathVariable Long id) {
+	    return directorService.findByIdDto(id)
+	      .map(ResponseEntity::ok)
+	      .orElseThrow(() -> new ResponseStatusException(
+	          HttpStatus.NOT_FOUND, "No existe el director con el ID: " + id
+	      ));
+	  }
+
+	  @PutMapping("/directores/{id}")
+	  public ResponseEntity<DirectorDTO> actualizarDirector(
+	      @PathVariable Long id,
+	      @RequestBody DirectorDTO detalles
+	  ) {
+	    DirectorDTO updated = directorService.updateDto(id, detalles);
+	    return ResponseEntity.ok(updated);
+	  }
 	
 	@DeleteMapping("/directores/{id}")
-	public ResponseEntity<Map<String,Boolean>> borrarDirector(@PathVariable int id) {
-	    Director director = directorService.obtenerDirector(id)
+	public ResponseEntity<Map<String,Boolean>> borrarDirector(@PathVariable long id) {
+	   /* Director director = directorService.obtenerDirector(id)
 	            .orElseThrow(() -> new ResponseStatusException(
 	                HttpStatus.NOT_FOUND, "No existe el director con el ID: " + id));
 	    
@@ -265,7 +286,11 @@ public class MovieController {
 	    
 	   // Director directorActualizado = directorService.save(director);
 	    Map<String, Boolean> respuesta = new HashMap<>();
-        respuesta.put("eliminar",Boolean.TRUE);
+        respuesta.put("eliminar",Boolean.TRUE);*/
+		directorService.deleteDirector(id);
+
+        Map<String, Boolean> respuesta = new HashMap<>();
+        respuesta.put("eliminar", Boolean.TRUE);
 	    
 	    return ResponseEntity.ok(respuesta);
 	}
@@ -303,24 +328,41 @@ public class MovieController {
 	        }
 
 	        List<GenreDTO> dtos = generos.stream().map(g -> {
-	            // Mapear cada Movie a un MovieDTO sin lista de géneros para evitar ciclos
-	            List<MovieDTO> movies = g.getMovies().stream().map(m -> {
-	                Director d = m.getDirector();
-	                DirectorDTO dirDto = new DirectorDTO(d.getId(), d.getName());
-	                return new MovieDTO(
-	                    m.getId(),
-	                    m.getTitle(),
-	                    m.getDescription(),
-	                    m.getReleaseDate(),
-	                    dirDto,
-	                    /* omitimos genres aquí */ Collections.emptyList()
-	                );
-	            }).toList();
+	            // Null-safe: si getMovies() es null, usamos un set vacío
+	            List<MovieDTO> movieDTOs = Optional
+	                .ofNullable(g.getMovies())
+	                .orElse(Collections.emptySet())
+	                .stream()
+	                .map(m -> {
+	                    // 1) Director puede ser null
+	                    Director dir = m.getDirector();
+	                    DirectorDTO dirDto = null;
+	                    if (dir != null) {
+	                        dirDto = new DirectorDTO(dir.getId(), dir.getName());
+	                    }
+	                    // 2) Si en MovieDTO quieres incluir géneros, mapea igual con Optional y null-safe
+	                    List<GenreDTO> genreDTOs = Optional
+	                        .ofNullable(m.getGenres())
+	                        .orElse(Collections.emptySet())
+	                        .stream()
+	                        .map(x -> new GenreDTO(x.getId(), x.getName(), /*ou omit movies*/ Collections.emptyList()))
+	                        .toList();
+
+	                    return new MovieDTO(
+	                        m.getId(),
+	                        m.getTitle(),
+	                        m.getDescription(),
+	                        m.getReleaseDate(),
+	                        dirDto,     // puede ser null
+	                        genreDTOs   // puede ser lista vacía
+	                    );
+	                })
+	                .toList();
 
 	            return new GenreDTO(
 	                g.getId(),
 	                g.getName(),
-	                movies
+	                movieDTOs       // lista de películas null-safe
 	            );
 	        }).toList();
 
@@ -349,8 +391,8 @@ public class MovieController {
 	}
 	
 	@DeleteMapping("/generos/{id}")
-	public ResponseEntity<Map<String,Boolean>> borrarGenero(@PathVariable int id) {
-	    Genre genero = genreService.obtenerGenero(id)
+	public ResponseEntity<Map<String,Boolean>> borrarGenero(@PathVariable long id) {
+	    /*Genre genero = genreService.obtenerGenero(id)
 	            .orElseThrow(() -> new ResponseStatusException(
 	                HttpStatus.NOT_FOUND, "No existe el genero con el ID: " + id));
 	    
@@ -360,7 +402,11 @@ public class MovieController {
 	    //Genre generoActualizado = genreService.save(genero);
 	    Map<String, Boolean> respuesta = new HashMap<>();
         respuesta.put("eliminar",Boolean.TRUE);
-	    
+	    */
+		genreService.deleteGenre(id);
+
+	    Map<String, Boolean> respuesta = new HashMap<>();
+	    respuesta.put("eliminar", Boolean.TRUE);
 	    return ResponseEntity.ok(respuesta);
 	}
 	

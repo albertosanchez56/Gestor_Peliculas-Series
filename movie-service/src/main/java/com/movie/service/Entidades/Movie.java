@@ -28,7 +28,7 @@ public class Movie {
     private LocalDate releaseDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "director_id", nullable = false)
+    @JoinColumn(name = "director_id", nullable = true)
     //@JsonBackReference("director-movies")
     private Director director;
 
