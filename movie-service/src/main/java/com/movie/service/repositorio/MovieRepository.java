@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.movie.service.Entidades.Movie;
 
 @Repository
-public interface MovieRepository extends JpaRepository<Movie, Integer>{
+public interface MovieRepository extends JpaRepository<Movie, Long>{
 
 	/*@Query("SELECT DISTINCT m FROM Movie m " +
 	         "LEFT JOIN FETCH m.genres " +
