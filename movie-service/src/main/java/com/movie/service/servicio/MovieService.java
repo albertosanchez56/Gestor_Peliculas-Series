@@ -100,22 +100,28 @@ public class MovieService {
        =========================== */
 
     private void applyRequestToEntity(Movie m, MovieRequest req) {
-        m.setTitle(req.title());
+    	m.setTitle(req.title());
         m.setDescription(req.description());
         m.setReleaseDate(req.releaseDate());
 
-        // Director
-        Director director = directorRepository.findById(req.directorId())
+        // director y géneros (como ya tienes)
+        var director = directorRepository.findById(req.directorId())
             .orElseThrow(() -> new EntityNotFoundException("No existe el director con ID: " + req.directorId()));
         m.setDirector(director);
 
-        // Géneros
-        var genres = new HashSet<Genre>();
+        var genres = new java.util.HashSet<Genre>();
         for (Long gid : req.genreIds()) {
-            Genre g = genreRepository.findById(gid)
-                .orElseThrow(() -> new EntityNotFoundException("No existe el género con ID: " + gid));
-            genres.add(g);
+            genres.add(genreRepository.findById(gid)
+                .orElseThrow(() -> new EntityNotFoundException("No existe el género con ID: " + gid)));
         }
         m.setGenres(genres);
+
+        // --- nuevos (si vienen) ---
+        if (req.durationMinutes() != null)   m.setDurationMinutes(req.durationMinutes());
+        if (req.originalLanguage() != null)  m.setOriginalLanguage(req.originalLanguage());
+        if (req.posterUrl() != null)         m.setPosterUrl(req.posterUrl());
+        if (req.backdropUrl() != null)       m.setBackdropUrl(req.backdropUrl());
+        if (req.trailerUrl() != null)        m.setTrailerUrl(req.trailerUrl());
+        if (req.ageRating() != null)         m.setAgeRating(req.ageRating());
     }
 }

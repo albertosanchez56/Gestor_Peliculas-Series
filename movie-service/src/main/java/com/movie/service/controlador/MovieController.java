@@ -48,8 +48,7 @@ public class MovieController {
 
 	// POST /peliculas/guardarpeliculas
 	@PostMapping(value = "/guardarpeliculas", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MovieDTO> crearPelicula(@Valid @RequestBody MovieRequest req, // evita exponer la entidad
-			UriComponentsBuilder uri) {
+	public ResponseEntity<MovieDTO> crearPelicula(@Valid @RequestBody MovieRequest req, UriComponentsBuilder uri) {
 		Movie created = movieService.create(req); // la lógica de mapping vive en el service
 		URI location = uri.path("/peliculas/peliculas/{id}").buildAndExpand(created.getId()).toUri();
 		return ResponseEntity.created(location).body(toDto(created)); // 201 + Location
@@ -80,11 +79,27 @@ public class MovieController {
 
 	private MovieDTO toDto(Movie m) {
 		DirectorDTO dir = (m.getDirector() == null) ? null
-				: new DirectorDTO(m.getDirector().getId(), m.getDirector().getName());
+	            : new DirectorDTO(m.getDirector().getId(), m.getDirector().getName());
 
-		List<GenreDTO> genres = (m.getGenres() == null) ? List.of()
-				: m.getGenres().stream().map(g -> new GenreDTO(g.getId(), g.getName())).toList();
+	    List<GenreDTO> genreDtos = (m.getGenres() == null) ? List.of()
+	            : m.getGenres().stream()
+	                 .map(g -> new GenreDTO(g.getId(), g.getName()))
+	                 .toList();
 
-		return new MovieDTO(m.getId(), m.getTitle(), m.getDescription(), m.getReleaseDate(), dir, genres);
+	    return new MovieDTO(
+	        m.getId(),
+	        m.getTitle(),
+	        m.getDescription(),
+	        m.getReleaseDate(),
+	        dir,
+	        genreDtos,
+	        m.getDurationMinutes(),
+	        m.getOriginalLanguage(),
+	        m.getPosterUrl(),
+	        m.getBackdropUrl(),
+	        m.getTrailerUrl(),
+	        m.getAgeRating(),
+	        m.getAverageRating() // si no existe en la entidad, pásalo como null o quítalo del DTO
+	    );
 	}
 }
