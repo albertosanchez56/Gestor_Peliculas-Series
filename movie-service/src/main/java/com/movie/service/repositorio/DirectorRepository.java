@@ -9,6 +9,6 @@ import com.movie.service.Entidades.Director;
 public interface DirectorRepository extends JpaRepository<Director, Long> {
 	
 	Optional<Director> findByTmdbId(Long tmdbId);
-	boolean existsByNameIgnoreCase(String name);
+	Optional<Director> findByNameIgnoreCase(String name);
 	
 }

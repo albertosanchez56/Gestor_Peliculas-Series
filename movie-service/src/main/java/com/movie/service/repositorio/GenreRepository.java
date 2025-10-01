@@ -14,6 +14,9 @@ public interface GenreRepository extends JpaRepository<Genre, Long>{
 	         "LEFT JOIN FETCH g.movies m " +
 	         "LEFT JOIN FETCH m.director")
 	  List<Genre> findAllWithMoviesAndDirectors();*/
+	Optional<Genre> findBySlugIgnoreCase(String slug);
+    Optional<Genre> findByNameIgnoreCase(String name);
+	
 	Optional<Genre> findByTmdbId(Long tmdbId);
 	boolean existsByNameIgnoreCase(String name); 
     boolean existsBySlug(String slug); 
