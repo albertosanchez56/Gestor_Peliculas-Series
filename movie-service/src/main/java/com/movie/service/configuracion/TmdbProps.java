@@ -1,9 +1,13 @@
+// src/main/java/com/movie/service/configuracion/TmdbProps.java
 package com.movie.service.configuracion;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 @ConfigurationProperties(prefix = "tmdb")
 public class TmdbProps {
+
   private String apiKey;
   private String baseUrl;
   private String imagesBase;
@@ -12,6 +16,7 @@ public class TmdbProps {
   private String language;
   private String certCountry;
 
+  // getters y setters
   public String getApiKey() { return apiKey; }
   public void setApiKey(String apiKey) { this.apiKey = apiKey; }
 
@@ -33,3 +38,4 @@ public class TmdbProps {
   public String getCertCountry() { return certCountry; }
   public void setCertCountry(String certCountry) { this.certCountry = certCountry; }
 }
+
