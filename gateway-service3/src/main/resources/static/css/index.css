@@ -1,0 +1,75 @@
+.sectionindex {
+	display: flex;
+	width: 100%;
+	/*height: 430px;*/
+	height: 700px;
+	
+
+}
+
+.sectionindex img {
+	width: 0px;
+	flex-grow: 1;
+	object-fit: cover;
+	opacity: .8;
+	transition: .5s ease;
+}
+
+.sectionindex img:hover {
+	cursor: crosshair;
+	width: 300px;
+	opacity: 1;
+	filter: contrast(120%);
+}
+
+
+
+#hover01 div img {
+	-webkit-transform: scale(1);
+	transform: scale(1);
+	-webkit-transition: .3s ease-in-out;
+	transition: .3s ease-in-out;
+}
+
+#hover01 div:hover img {
+	-webkit-transform: scale(1.3);
+	transform: scale(1.3);
+}
+
+.titulos {
+	margin: auto;
+	/*background: linear-gradient(220.55deg, #4643DF 0%, #0B0A47 100%);*/
+	border-radius: 8px;
+	color: white;
+	width: 100%;
+	max-width: 1500px;
+	height: 50px;
+	margin-bottom: 5px;
+	margin-top: 20px;
+
+}
+
+
+.titulos>h3 {
+	padding-top: 10px;
+	padding-left: 10px;
+}
+
+.tituloscarrousel {
+	margin: auto;
+	/*background: linear-gradient(220.55deg, #4643DF 0%, #0B0A47 100%);*/
+	border-radius: 8px;
+	color: white;
+	width: 100%;
+	max-width: 1500px;
+	height: 20px;
+	margin-bottom: 40px;
+	margin-top: 20px;
+
+}
+
+@media (min-width: 1900px) and (max-width: 2999px) {
+  .tituloscarrousel ,.titulos{
+    max-width: 2020px;
+  }
+}
