@@ -1,0 +1,52 @@
+server:
+  port: 9090
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka   # <- usa defaultZone (camelCase)
+  instance:
+    hostname: localhost
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true                           # Puedes dejarlo en true, ver nota abajo
+      # CORS (opcional pero recomendado: centralizado aquí)
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        # Usuarios (como ya lo tienes)
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/usuario/**
+
+        # Películas (como ya lo tienes)
+        - id: movie-service
+          uri: lb://MOVIE-SERVICE
+          predicates:
+            - Path=/peliculas/**
+
+        # ✅ NUEVO: Géneros → Movie Service (porque GenreController vive ahí)
+        - id: genres-to-movie
+          uri: lb://MOVIE-SERVICE
+          predicates:
+            - Path=/generos/**
+
+        # (Opcional) Directores si también están en movie-service
+        - id: directors-to-movie
+          uri: lb://MOVIE-SERVICE
+          predicates:
+            - Path=/directores/**
+
+
