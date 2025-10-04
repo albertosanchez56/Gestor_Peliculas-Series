@@ -85,6 +85,35 @@ public class TmdbImportService {
     }
     return imported;
   }
+  
+  @Transactional
+  public ImportSummary importPopularSummary(int pages) {
+    pages = Math.max(1, Math.min(pages, 10));
+
+    int requested = 0, created = 0, updated = 0, skipped = 0;
+    List<Long> importedIds = new ArrayList<>();
+    List<String> errors = new ArrayList<>();
+
+    for (int page = 1; page <= pages; page++) {
+      TmdbPopularResponse pr = tmdbClient.getPopular(page);
+      if (pr == null || pr.results() == null) break;
+
+      for (TmdbPopularResponse.Item item : pr.results()) {
+        requested++;
+        boolean existed = movieRepository.existsByTmdbId(item.id()); // antes de importar
+        try {
+          Movie saved = importMovie(item.id());
+          if (existed) updated++; else created++;
+          if (saved.getId() != null) importedIds.add(saved.getId());
+        } catch (Exception ex) {
+          skipped++;
+          errors.add(item.id() + ": " + ex.getMessage());
+        }
+      }
+    }
+    return new ImportSummary(requested, created, updated, skipped, importedIds, errors);
+  }
+
 
   /* Helpers */
 

@@ -25,4 +25,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 	int detachGenreFromMovies(@Param("genreId") Long genreId);
 	
 	Optional<Movie> findByTmdbId(Long tmdbId);
+	boolean existsByTmdbId(Long tmdbId);
 }
