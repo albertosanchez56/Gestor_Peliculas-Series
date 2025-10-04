@@ -9,5 +9,8 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,mappings
+        include: health,info,gateway
+  endpoint:
+    gateway:
+      enabled: true
   
