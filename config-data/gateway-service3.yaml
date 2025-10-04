@@ -48,7 +48,7 @@ spring:
           uri: lb://MOVIE-SERVICE
           predicates:
             - Path=/directores/**
-            
+
         - id: movie-service-tmdb
           uri: lb://MOVIE-SERVICE
           predicates:
