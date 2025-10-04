@@ -43,6 +43,8 @@ public class TmdbImportController {
     Movie m = importService.importMovie(tmdbId); // <-- usa el método que SÍ tienes
     return ResponseEntity.ok(toDto(m));
   }
+  
+  
 
   // ------ mapper simple Movie -> MovieDTO (ajústalo si tu MovieDTO difiere)
   private MovieDTO toDto(Movie m) {
