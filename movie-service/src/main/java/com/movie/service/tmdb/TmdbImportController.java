@@ -1,5 +1,5 @@
 // src/main/java/com/movie/service/controlador/TmdbImportController.java
-package com.movie.service.controlador;
+package com.movie.service.tmdb;
 
 import java.util.List;
 
@@ -13,7 +13,6 @@ import com.movie.service.DTO.GenreDTO;
 import com.movie.service.DTO.MovieDTO;
 import com.movie.service.Entidades.Director;
 import com.movie.service.Entidades.Movie;
-import com.movie.service.tmdb.TmdbImportService;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
