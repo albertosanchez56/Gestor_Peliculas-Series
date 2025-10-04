@@ -13,6 +13,7 @@ import com.movie.service.DTO.GenreDTO;
 import com.movie.service.DTO.MovieDTO;
 import com.movie.service.Entidades.Director;
 import com.movie.service.Entidades.Movie;
+import com.movie.service.tmdb.ImportSummary;
 import com.movie.service.tmdb.TmdbImportService;
 
 import jakarta.validation.constraints.Max;
@@ -41,10 +42,17 @@ public class TmdbImportController {
   // POST /tmdb/import/{tmdbId}
   @PostMapping(value = "/import/{tmdbId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<MovieDTO> importOne(@PathVariable @Positive long tmdbId) {
-    Movie m = importService.importMovie(tmdbId); // <-- usa el método que SÍ tienes
+    Movie m = importService.importMovie(tmdbId);
     return ResponseEntity.ok(toDto(m));
   }
   
+  @PostMapping(value = "/import/popular/summary", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<ImportSummary> importPopularSummary(
+      @RequestParam(defaultValue = "1") @Min(1) @Max(10) int pages) {
+    ImportSummary summary = importService.importPopularSummary(pages);
+    return ResponseEntity.ok(summary);
+  }
+
   
 
   // ------ mapper simple Movie -> MovieDTO (ajústalo si tu MovieDTO difiere)
