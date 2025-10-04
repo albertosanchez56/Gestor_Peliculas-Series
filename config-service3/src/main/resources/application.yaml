@@ -9,4 +9,4 @@ spring:
           uri: https://github.com/albertosanchez56/Gestor_Peliculas-Series.git
           search-paths: config-data
   application:
-    name: gateway-service
+    name: main
