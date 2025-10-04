@@ -17,6 +17,13 @@ spring:
       ddl-auto: update  # Cambia a 'validate', 'none', o 'create' según tus necesidades
     show-sql: true      # Opción para mostrar las consultas SQL en la consola
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,mappings
+
+
 tmdb:
   api-key: TU_API_KEY
   base-url: https://api.themoviedb.org/3
