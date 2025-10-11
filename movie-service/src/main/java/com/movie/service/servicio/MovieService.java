@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,6 +95,12 @@ public class MovieService {
         }
         movieRepository.deleteById(id);
     }
+    
+    public List<Movie> getTopRated(int limit) {
+    	  int lim = Math.max(1, Math.min(limit, 50)); // cap opcional
+    	  return movieRepository.findTopRated(PageRequest.of(0, lim));
+    	}
+
 
     /* ===========================
        Helper de mapeo

@@ -74,6 +74,13 @@ public class MovieController {
 		movieService.delete(id);
 		return ResponseEntity.noContent().build(); // 204
 	}
+	
+	@GetMapping(value = "/top-rated", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MovieDTO>> topRated(@RequestParam(defaultValue = "19") int limit) {
+	  List<Movie> top = movieService.getTopRated(limit);
+	  return ResponseEntity.ok(top.stream().map(this::toDto).toList());
+	}
+
 
 	// ---------- Helpers privados (DRY) ----------
 
