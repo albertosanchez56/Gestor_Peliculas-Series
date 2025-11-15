@@ -3,7 +3,9 @@ package com.movie.service.Entidades;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -51,6 +53,10 @@ public class Movie {
         inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private Set<Genre> genres = new HashSet<>();
+    
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<CastCredit> cast = new ArrayList<>();
+
 
     // Extras recomendados
     private Integer durationMinutes;          // duración
@@ -108,8 +114,18 @@ public class Movie {
     public Movie() {}
 
     /* === Getters/Setters === */
+    
+    
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public List<CastCredit> getCast() {
+		return cast;
+	}
+
+	public void setCast(List<CastCredit> cast) {
+		this.cast = cast;
+	}
+
+	public void setId(Long id) { this.id = id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

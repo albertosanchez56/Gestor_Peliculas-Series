@@ -30,6 +30,7 @@ tmdb:
   images-base: https://image.tmdb.org/t/p
   poster-size: /w500
   backdrop-size: /w780
+  profile-size: /w300
   language: es-ES
   cert-country: ES
 

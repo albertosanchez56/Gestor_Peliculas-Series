@@ -29,6 +29,7 @@ public class TmdbImportService {
   private final MovieRepository movieRepository;
   private final DirectorRepository directorRepository;
   private final GenreRepository genreRepository;
+  private final CastImportService castImportService;
 
   @Transactional
   public Movie importMovie(long tmdbId) {
@@ -63,7 +64,13 @@ public class TmdbImportService {
     Set<Genre> genres = upsertGenres(details);
     movie.setGenres(genres);
 
-    return movieRepository.save(movie);
+    // 1) Guarda primero para asegurar ID
+    Movie saved = movieRepository.save(movie);
+
+    // 2) Luego refresca el reparto
+    castImportService.refreshCast(saved.getId(), tmdbId);
+
+    return saved;
   }
 
   @Transactional
