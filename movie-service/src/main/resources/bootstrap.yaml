@@ -31,6 +31,7 @@ tmdb:
   poster-size: /w500
   backdrop-size: /w780
   profile-size: /w300
+  profileSize: /w185
   language: es-ES
   cert-country: ES
 

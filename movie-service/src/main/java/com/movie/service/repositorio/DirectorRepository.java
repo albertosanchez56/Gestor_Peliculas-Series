@@ -10,5 +10,7 @@ public interface DirectorRepository extends JpaRepository<Director, Long> {
 	
 	Optional<Director> findByTmdbId(Long tmdbId);
 	Optional<Director> findByNameIgnoreCase(String name);
+	Optional<Director> findBySlugIgnoreCase(String slug);
+	boolean existsBySlugIgnoreCase(String slug);
 	
 }

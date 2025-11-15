@@ -198,6 +198,6 @@ public class Movie {
 
     /* === Enum de estado === */
     public enum MovieStatus {
-        ANNOUNCED, IN_PRODUCTION, POST_PRODUCTION, RELEASED, CANCELED, UPCOMING
+        ANNOUNCED, IN_PRODUCTION,RUMORED, PLANNED, POST_PRODUCTION, RELEASED, CANCELED, UPCOMING
     }
 }

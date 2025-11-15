@@ -27,6 +27,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 	int detachGenreFromMovies(@Param("genreId") Long genreId);
 	
 	Optional<Movie> findByTmdbId(Long tmdbId);
+	boolean existsBySlugIgnoreCase(String slug);
+    Optional<Movie> findBySlugIgnoreCase(String slug);
 	boolean existsByTmdbId(Long tmdbId);
 	@Query(" select distinct m from Movie m\r\n"
 			+ "  left join fetch m.director\r\n"

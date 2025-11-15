@@ -9,4 +9,11 @@ public interface TmdbClient {
     TmdbVideosResponse getMovieVideos(long tmdbId);
     TmdbReleaseDatesResponse getMovieReleaseDates(long tmdbId);
     TmdbPopularResponse getPopular(int page);
+    
+    TmdbMovieDetails getMovieDetails(long tmdbId, String languageOrNull);
+    TmdbVideosResponse getMovieVideos(long tmdbId, String languageOrNull, String includeVideoLanguageOrNull);
+    TmdbCredits getMovieCredits(long tmdbId, String languageOrNull);
+    TmdbPersonDetails getPersonDetails(long personId);
+    TmdbVideosResponse getMovieVideos(long tmdbId, String lang);
+    TmdbPersonDetails getPersonDetails(long personId, String language);
 }

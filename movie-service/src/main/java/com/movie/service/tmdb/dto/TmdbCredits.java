@@ -11,16 +11,18 @@ public record TmdbCredits(
 	    List<Cast> cast
 	) {
 	    @JsonIgnoreProperties(ignoreUnknown = true)
-	    public record Crew(String job, String name) {}
+	    public record Crew(Long id, String job, String name,
+                @JsonProperty("department") String department,
+                @JsonProperty("profile_path") String profilePath) {}
 
 	    @JsonIgnoreProperties(ignoreUnknown = true)
 	    public record Cast(
-	        long id,
-	        String name,
-	        String character,
-	        @JsonProperty("profile_path") String profile_path,
-	        Integer order,
-	        @JsonProperty("known_for_department") String known_for_department,
-	        Double popularity
-	    ) {}
+	    	    Long id,
+	    	    @JsonProperty("known_for_department") String known_for_department,
+	    	    String name,
+	    	    String character,
+	    	    Integer order,
+	    	    Double popularity,
+	    	    @JsonProperty("profile_path") String profilePath
+	    	) {}
 	}

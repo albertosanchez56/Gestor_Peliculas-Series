@@ -18,8 +18,24 @@ public record TmdbMovieDetails(
     @JsonProperty("backdrop_path") String backdropPath,
     @JsonProperty("vote_average") Double voteAverage,
     @JsonProperty("vote_count") Integer voteCount,
+
+    // NUEVOS
+    Long budget,
+    Long revenue,
+    Double popularity,
+    String status, // "Rumored", "Planned", "In Production", "Post Production", "Released", "Canceled"
+
+    @JsonProperty("production_countries")
+    List<ProductionCountry> productionCountries,
+
     List<TmdbGenre> genres
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record TmdbGenre(long id, String name) {}
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record ProductionCountry(
+        @JsonProperty("iso_3166_1") String iso_3166_1,
+        String name
+    ) {}
 }
