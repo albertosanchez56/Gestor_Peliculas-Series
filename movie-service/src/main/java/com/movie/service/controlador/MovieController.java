@@ -21,11 +21,14 @@ import com.movie.service.DTO.DirectorDTO;
 import com.movie.service.DTO.GenreDTO;
 import com.movie.service.DTO.MovieDTO;
 import com.movie.service.DTO.MovieRequest;
+import com.movie.service.Entidades.CastCredit;
 import com.movie.service.Entidades.Movie;
+import com.movie.service.repositorio.CastCreditRepository;
 import com.movie.service.servicio.MovieService;
+import com.movie.service.tmdb.CastImportService;
 
 import jakarta.validation.Valid;
-
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 // Para ResponseStatusException
 
@@ -36,6 +39,8 @@ import lombok.RequiredArgsConstructor;
 public class MovieController {
 
 	private final MovieService movieService;
+	private final CastCreditRepository castCreditRepository;
+	private final CastImportService castImportService;
 
 	// GET /peliculas/mostrarpeliculas
 	@GetMapping(value = "/mostrarpeliculas", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -80,6 +85,19 @@ public class MovieController {
 	  List<Movie> top = movieService.getTopRated(limit);
 	  return ResponseEntity.ok(top.stream().map(this::toDto).toList());
 	}
+	
+	@PostMapping(value = "/cast/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<CastCredit> importCast(
+		      @PathVariable @NotNull Long movieId,
+		      @PathVariable @NotNull Long tmdbId
+		  ) {
+		    return castImportService.refreshCast(movieId, tmdbId);
+		  }
+	
+	@GetMapping(value = "/cast/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<CastCredit> getCast(@PathVariable @NotNull Long movieId) {
+	    return castCreditRepository.findByMovieIdOrderByOrderIndexAsc(movieId);
+	  }
 
 
 	// ---------- Helpers privados (DRY) ----------
