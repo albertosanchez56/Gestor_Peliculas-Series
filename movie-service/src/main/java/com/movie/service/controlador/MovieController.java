@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.movie.service.DTO.CastCreditDTO;
 import com.movie.service.DTO.DirectorDTO;
 import com.movie.service.DTO.GenreDTO;
 import com.movie.service.DTO.MovieDTO;
@@ -86,18 +87,21 @@ public class MovieController {
 	  return ResponseEntity.ok(top.stream().map(this::toDto).toList());
 	}
 	
-	@PostMapping(value = "/cast/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<CastCredit> importCast(
-		      @PathVariable @NotNull Long movieId,
-		      @PathVariable @NotNull Long tmdbId
-		  ) {
-		    return castImportService.refreshCast(movieId, tmdbId);
-		  }
+	@PostMapping(value = "/cast/{id}/tmdb/{tmdbId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	  public List<CastCredit> importCast(
+	      @PathVariable Long id,
+	      @PathVariable Long tmdbId
+	  ) {
+	    return castImportService.refreshCast(id, tmdbId);
+	  }
 	
 	@GetMapping(value = "/cast/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<CastCredit> getCast(@PathVariable @NotNull Long movieId) {
-	    return castCreditRepository.findByMovieIdOrderByOrderIndexAsc(movieId);
-	  }
+	public List<CastCreditDTO> getCast(@PathVariable Long id) {
+	  return castCreditRepository.findByMovieIdOrderByOrderIndexAsc(id)
+	      .stream()
+	      .map(CastCreditDTO::from)
+	      .toList();
+	}
 
 
 	// ---------- Helpers privados (DRY) ----------
