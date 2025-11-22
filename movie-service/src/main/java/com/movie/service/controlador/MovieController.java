@@ -3,8 +3,10 @@ package com.movie.service.controlador;
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import com.movie.service.DTO.DirectorDTO;
 import com.movie.service.DTO.GenreDTO;
 import com.movie.service.DTO.MovieDTO;
 import com.movie.service.DTO.MovieRequest;
+import com.movie.service.DTO.MovieSuggestionDTO;
 import com.movie.service.Entidades.CastCredit;
 import com.movie.service.Entidades.Movie;
 import com.movie.service.repositorio.CastCreditRepository;
@@ -101,6 +104,29 @@ public class MovieController {
 	      .stream()
 	      .map(CastCreditDTO::from)
 	      .toList();
+	}
+	
+	// --- AUTOCOMPLETE: /peliculas/search?q=texto&size=8 ---
+	@GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MovieSuggestionDTO>> searchSuggestions(
+	    @RequestParam String q,
+	    @RequestParam(defaultValue = "8") int size
+	) {
+	  var rows = movieService.searchByText(q, size);
+	  var dto  = rows.stream().map(MovieSuggestionDTO::from).toList();
+	  return ResponseEntity.ok(dto);
+	}
+
+	// --- LISTADO PAGINADO + q: /peliculas/peliculas?page=0&size=25&q=texto ---
+	@GetMapping(value = "/peliculas", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MovieDTO>> listPaged(
+	    @RequestParam(defaultValue = "0") int page,
+	    @RequestParam(defaultValue = "25") int size,
+	    @RequestParam(required = false) @Nullable String q
+	) {
+	  Page<Movie> p = movieService.listPaged(page, size, q);
+	  var dto = p.getContent().stream().map(this::toDto).toList();
+	  return ResponseEntity.ok(dto);
 	}
 
 

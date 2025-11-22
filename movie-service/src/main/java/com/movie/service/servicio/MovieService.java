@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +51,8 @@ public class MovieService {
     public void borrarPelicula(Movie movie) {
         movieRepository.delete(movie);
     }
+    
+
 
     /* ===========================
        Métodos nuevos (controller)
@@ -100,6 +106,23 @@ public class MovieService {
     	  int lim = Math.max(1, Math.min(limit, 50)); // cap opcional
     	  return movieRepository.findTopRated(PageRequest.of(0, lim));
     	}
+    
+    public Page<Movie> listPaged(int page, int size, @Nullable String q) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("title").ascending());
+        if (q == null || q.isBlank()) {
+            return movieRepository.findAll(pageable);
+        }
+        return movieRepository.searchAllFields(q.trim(), pageable);
+        // O si prefieres simple por título:
+        // return movieRepository.findByTitleContainingIgnoreCase(q.trim(), pageable);
+    }
+
+    /** Sugerencias (autocomplete) limitado por size. */
+    public List<Movie> searchByText(String q, int size) {
+        if (q == null || q.isBlank()) return List.of();
+        Pageable pageable = PageRequest.of(0, size);
+        return movieRepository.searchAllFields(q.trim(), pageable).getContent();
+    }
 
 
     /* ===========================
