@@ -1,22 +1,18 @@
 spring:
   application:
     name: user-service
-
-  config:
-    import: "optional:configserver:http://localhost:8081"
-
   cloud:
     config:
       enabled: true
       uri: http://localhost:8081
 
   datasource:
-    url: jdbc:mysql://localhost:3306/pruebagestorusuarios
-    username: root
-    password: ""
+    url: jdbc:mysql://localhost:3306/pruebagestorusuarios  # Cambia a la URL de tu base de datos
+    username: root                               # Cambia por el usuario de tu base de datos
+    password:                             # Cambia por la contraseña de tu base de datos
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: update  # Cambia a 'validate', 'none', o 'create' según tus necesidades
+    show-sql: true      # Opción para mostrar las consultas SQL en la consola
