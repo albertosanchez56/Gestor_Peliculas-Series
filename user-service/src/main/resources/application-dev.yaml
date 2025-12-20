@@ -1,0 +1,8 @@
+app:
+  seed:
+    admin:
+      enabled: true
+      email: "admin@local.com"
+      username: "admin"
+      password: "admin12345"
+      displayName: "Admin"

@@ -7,6 +7,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+
+
 
 @Configuration
 public class SecurityConfig {
@@ -20,22 +24,20 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                // público
-                .requestMatchers("/usuario/auth/register", "/usuario/auth/login").permitAll()
-
-                // privado (logueado)
-                .requestMatchers("/usuario/auth/me").authenticated()
-
-                // admin
-                .requestMatchers("/usuario/admin/**").hasRole("ADMIN")
-
-                // por ahora deja lo demás público (ajustaremos luego)
-                .anyRequest().permitAll()
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+          .csrf(csrf -> csrf.disable())
+          .exceptionHandling(ex -> ex
+              .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+          )
+          .authorizeHttpRequests(auth -> auth
+              .requestMatchers("/usuario/auth/register", "/usuario/auth/login").permitAll()
+              .requestMatchers("/usuario/auth/me").authenticated()
+              .requestMatchers("/usuario/admin/**").hasRole("ADMIN")
+              .anyRequest().permitAll()
+          )
+          .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+    
+    
 }
