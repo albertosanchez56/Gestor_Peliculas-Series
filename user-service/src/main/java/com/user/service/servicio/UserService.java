@@ -22,7 +22,7 @@ public class UserService {
 		return userRepository.findAll();
 	}
 	
-	public User obtenerUsurario(int id) {
+	public User obtenerUsurario(long id) {
 		return userRepository.findById(id).orElse(null);
 	}
 	

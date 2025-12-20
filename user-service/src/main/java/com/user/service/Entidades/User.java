@@ -1,92 +1,77 @@
 package com.user.service.Entidades;
-
-import jakarta.persistence.Entity;
+ 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.Instant;
-import java.util.Objects;
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 @Entity
-@Table(
-  name = "users",
-  uniqueConstraints = {
-    @UniqueConstraint(name = "uk_users_username", columnNames = "username"),
-    @UniqueConstraint(name = "uk_users_email", columnNames = "email")
-  }
-)
+@Table(name = "users",
+       indexes = {
+         @Index(name = "idx_users_email", columnList = "email"),
+         @Index(name = "idx_users_username", columnList = "username")
+       },
+       uniqueConstraints = {
+         @UniqueConstraint(name = "uk_users_email", columnNames = "email"),
+         @UniqueConstraint(name = "uk_users_username", columnNames = "username")
+       })
 public class User {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(nullable = false, length = 24)
-  private String username;
+    @Column(nullable = false, length = 190)
+    private String email;
 
-  @Column(nullable = false, length = 254)
-  private String email;
+    @Column(nullable = false, length = 50)
+    private String username;
 
-  @Column(nullable = false, length = 72)
-  private String passwordHash;
+    @Column(name = "password_hash", nullable = false, length = 255)
+    private String passwordHash;
 
-  private String avatarUrl;
+    @Column(name = "display_name", nullable = false, length = 80)
+    private String displayName;
 
-  @CreationTimestamp
-  @Column(updatable = false, nullable = false)
-  private Instant createdAt;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role role = Role.USER;
 
-  public User() {}
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Status status = Status.ACTIVE;
 
-  public User(Long id, String username, String email, String passwordHash, String avatarUrl, Instant createdAt) {
-    this.id = id;
-    this.username = username;
-    this.email = email;
-    this.passwordHash = passwordHash;
-    this.avatarUrl = avatarUrl;
-    this.createdAt = createdAt;
-  }
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt = Instant.now();
 
-  // Getters y setters
-  public Long getId() { return id; }
-  public void setId(Long id) { this.id = id; }
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt = Instant.now();
 
-  public String getUsername() { return username; }
-  public void setUsername(String username) { this.username = username; }
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = Instant.now();
+    }
 
-  public String getEmail() { return email; }
-  public void setEmail(String email) { this.email = email; }
+    // --- getters/setters ---
 
-  public String getPasswordHash() { return passwordHash; }
-  public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public Long getId() { return id; }
 
-  public String getAvatarUrl() { return avatarUrl; }
-  public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-  public Instant getCreatedAt() { return createdAt; }
-  public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-  // equals/hashCode por id
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof User)) return false;
-    User user = (User) o;
-    return Objects.equals(id, user.id);
-  }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
-  }
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
 
-  @Override
-  public String toString() {
-    return "User{id=" + id + ", username='" + username + "', email='" + email + "'}";
-  }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
+
+    public Instant getCreatedAt() { return createdAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
 }
