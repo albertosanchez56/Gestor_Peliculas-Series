@@ -2,13 +2,13 @@ package com.user.service.dto;
 
 import com.user.service.Entidades.Role;
 
-public class LoginResponseDTO {
+public class UserInfoDTO {
     private Long id;
     private String username;
     private String displayName;
     private Role role;
 
-    public LoginResponseDTO(Long id, String username, String displayName, Role role) {
+    public UserInfoDTO(Long id, String username, String displayName, Role role) {
         this.id = id;
         this.username = username;
         this.displayName = displayName;

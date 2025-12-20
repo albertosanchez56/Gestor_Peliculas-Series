@@ -16,3 +16,8 @@ spring:
     hibernate:
       ddl-auto: update  # Cambia a 'validate', 'none', o 'create' según tus necesidades
     show-sql: true      # Opción para mostrar las consultas SQL en la consola
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:vW9mF7kQ3zH1pA6nR2sX8cJ5yT4uE0iL9oB3gN7dP1rK6mQ2xS8aV5hZ0tY9uC}
+    expiration-minutes: ${JWT_EXP_MINUTES:120}
