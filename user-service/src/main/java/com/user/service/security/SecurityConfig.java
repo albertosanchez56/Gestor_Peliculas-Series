@@ -2,7 +2,7 @@ package com.user.service.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 
-
+@EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
 
@@ -31,13 +31,19 @@ public class SecurityConfig {
           .authorizeHttpRequests(auth -> auth
               .requestMatchers("/usuario/auth/register", "/usuario/auth/login").permitAll()
               .requestMatchers("/usuario/auth/me").authenticated()
-              .requestMatchers("/usuario/admin/**").hasRole("ADMIN")
+
+              // Todo lo demás de /usuario requiere estar autenticado
+              // (y luego ya @PreAuthorize decide si ADMIN o no)
+              .requestMatchers("/usuario/**").authenticated()
+
+              // El resto abierto (o cámbialo a authenticated si quieres más seguridad)
               .anyRequest().permitAll()
           )
           .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
     
     
 }
