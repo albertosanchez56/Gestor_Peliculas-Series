@@ -3,6 +3,7 @@ package com.user.service.controlador;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.user.service.Entidades.User;
@@ -44,9 +45,11 @@ public class UserAdminController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<UserAdminDTO> updateStatus(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateUserStatusRequest req
+            @Valid @RequestBody UpdateUserStatusRequest req,
+            Authentication auth
     ) {
-        User updated = userService.updateStatus(id, req.status());
+        Long actorId = Long.valueOf(auth.getName()); // ✅ viene del JWT sub
+        User updated = userService.updateStatus(actorId, id, req.status());
         return ResponseEntity.ok(toDto(updated));
     }
 
@@ -54,9 +57,11 @@ public class UserAdminController {
     @PatchMapping("/{id}/role")
     public ResponseEntity<UserAdminDTO> updateRole(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateUserRoleRequest req
+            @Valid @RequestBody UpdateUserRoleRequest req,
+            Authentication auth
     ) {
-        User updated = userService.updateRole(id, req.role());
+        Long actorId = Long.valueOf(auth.getName()); // ✅ viene del JWT sub
+        User updated = userService.updateRole(actorId, id, req.role());
         return ResponseEntity.ok(toDto(updated));
     }
 
