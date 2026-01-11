@@ -2,13 +2,14 @@ package com.user.service.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @EnableMethodSecurity
@@ -24,26 +25,33 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-          .csrf(csrf -> csrf.disable())
-          .exceptionHandling(ex -> ex
-              .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-          )
-          .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/usuario/auth/register", "/usuario/auth/login").permitAll()
-              .requestMatchers("/usuario/auth/me").authenticated()
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            )
+            // Si no usas form login / basic, mejor apagarlos
+            .httpBasic(b -> b.disable())
+            .formLogin(f -> f.disable())
+            .authorizeHttpRequests(auth -> auth
+                // Preflight CORS (importante si alguna vez llamas directo a este MS)
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-              // Todo lo demás de /usuario requiere estar autenticado
-              // (y luego ya @PreAuthorize decide si ADMIN o no)
-              .requestMatchers("/usuario/**").authenticated()
+                // Públicos
+                .requestMatchers("/usuario/auth/register", "/usuario/auth/login").permitAll()
 
-              // El resto abierto (o cámbialo a authenticated si quieres más seguridad)
-              .anyRequest().permitAll()
-          )
-          .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                // Autenticado (usuario logueado)
+                .requestMatchers("/usuario/auth/me").authenticated()
+                .requestMatchers("/usuario/ping").authenticated()
+
+                // Admin (siempre bajo /usuario/admin/**)
+                .requestMatchers("/usuario/admin/**").hasRole("ADMIN")
+
+                // ✅ DEFAULT: cerrado
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
-    
-    
 }
