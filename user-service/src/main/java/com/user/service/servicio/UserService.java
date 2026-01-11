@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -12,11 +13,21 @@ import com.user.service.Entidades.Status;
 import com.user.service.Entidades.User;
 import com.user.service.repositorio.UserRepository;
 
+import java.util.Optional;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.user.service.Entidades.User;
+import com.user.service.repositorio.UserRepository;
+
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    private final PasswordEncoder passwordEncoder;
 
     public List<User> getAll() {
         return userRepository.findAll();
@@ -28,6 +39,11 @@ public class UserService {
 
     public User save(User usuario) {
         return userRepository.save(usuario);
+    }
+    
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User findByIdOrThrow(Long id) {
@@ -55,5 +71,41 @@ public class UserService {
         User u = findByIdOrThrow(targetId);
         u.setStatus(status);
         return userRepository.save(u);
+    }
+    
+    public User findByUsernameOrThrow(String username) {
+        return userRepository.findByUsernameIgnoreCase(username)
+            .orElseThrow(() -> new RuntimeException("User not found: " + username));
+    }
+
+    public User updateMe(String username, String displayName, String emailOrNull) {
+        User u = findByUsernameOrThrow(username);
+
+        u.setDisplayName(displayName.trim());
+
+        if (emailOrNull != null && !emailOrNull.trim().isBlank()) {
+            String newEmail = emailOrNull.trim();
+
+            // si está en uso por otro
+            Optional<User> existing = userRepository.findByEmailIgnoreCase(newEmail);
+            if (existing.isPresent() && !existing.get().getId().equals(u.getId())) {
+                throw new IllegalArgumentException("El email ya está en uso.");
+            }
+
+            u.setEmail(newEmail);
+        }
+
+        return userRepository.save(u);
+    }
+
+    public void changeMyPassword(String username, String currentPassword, String newPassword) {
+        User u = findByUsernameOrThrow(username);
+
+        if (!passwordEncoder.matches(currentPassword, u.getPasswordHash())) {
+            throw new IllegalArgumentException("Contraseña actual incorrecta.");
+        }
+
+        u.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(u);
     }
 }
