@@ -63,11 +63,16 @@ public class AuthController {
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/me")
     public ResponseEntity<UserInfoDTO> updateMe(
-            Authentication auth,
-            @Valid @RequestBody UpdateMeRequest req
+            @Valid @RequestBody UpdateMeRequest req,
+            Authentication auth
     ) {
-        String username = auth.getName(); // principal -> username
-        User updated = userService.updateMe(username, req.getDisplayName(), req.getEmail());
+        Long userId = Long.parseLong(auth.getName()); // ← viene del JWT (sub)
+
+        User updated = userService.updateMe(
+                userId,
+                req.getDisplayName(),
+                req.getEmail()
+        );
 
         return ResponseEntity.ok(new UserInfoDTO(
                 updated.getId(),
@@ -76,6 +81,7 @@ public class AuthController {
                 updated.getRole()
         ));
     }
+
 
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/me/password")

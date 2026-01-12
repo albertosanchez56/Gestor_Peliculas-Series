@@ -78,25 +78,18 @@ public class UserService {
             .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
 
-    public User updateMe(String username, String displayName, String emailOrNull) {
-        User u = findByUsernameOrThrow(username);
+    public User updateMe(Long userId, String displayName, String email) {
+        User u = findByIdOrThrow(userId);
 
-        u.setDisplayName(displayName.trim());
+        u.setDisplayName(displayName);
 
-        if (emailOrNull != null && !emailOrNull.trim().isBlank()) {
-            String newEmail = emailOrNull.trim();
-
-            // si está en uso por otro
-            Optional<User> existing = userRepository.findByEmailIgnoreCase(newEmail);
-            if (existing.isPresent() && !existing.get().getId().equals(u.getId())) {
-                throw new IllegalArgumentException("El email ya está en uso.");
-            }
-
-            u.setEmail(newEmail);
+        if (email != null && !email.isBlank()) {
+            u.setEmail(email);
         }
 
         return userRepository.save(u);
     }
+
 
     public void changeMyPassword(String username, String currentPassword, String newPassword) {
         User u = findByUsernameOrThrow(username);
