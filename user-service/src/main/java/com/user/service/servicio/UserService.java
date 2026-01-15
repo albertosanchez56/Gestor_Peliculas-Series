@@ -52,9 +52,12 @@ public class UserService {
     }
 
     // ✅ Protegido: actorId no puede cambiarse a sí mismo
-    public User updateRole(Long actorId, Long targetId, Role role) {
-        if (actorId != null && actorId.equals(targetId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No puedes cambiar tu propio rol.");
+    public User updateRole(String actorUsername, Long targetId, Role role) {
+        User actor = findByUsernameOrThrow(actorUsername);
+
+        if (actor.getId().equals(targetId)) {
+            throw new RuntimeException("No puedes cambiar tu propio rol.");
+            // si prefieres ResponseStatusException, úsala
         }
 
         User u = findByIdOrThrow(targetId);
@@ -62,10 +65,13 @@ public class UserService {
         return userRepository.save(u);
     }
 
+
     // ✅ Protegido: actorId no puede banearse a sí mismo
-    public User updateStatus(Long actorId, Long targetId, Status status) {
-        if (actorId != null && actorId.equals(targetId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No puedes cambiar tu propio estado.");
+    public User updateStatus(String actorUsername, Long targetId, Status status) {
+        User actor = findByUsernameOrThrow(actorUsername);
+
+        if (actor.getId().equals(targetId)) {
+            throw new RuntimeException("No puedes cambiar tu propio estado.");
         }
 
         User u = findByIdOrThrow(targetId);
@@ -78,8 +84,8 @@ public class UserService {
             .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
 
-    public User updateMe(Long userId, String displayName, String email) {
-        User u = findByIdOrThrow(userId);
+    public User updateMe(String username, String displayName, String email) {
+        User u = findByUsernameOrThrow(username);
 
         u.setDisplayName(displayName);
 
@@ -89,6 +95,7 @@ public class UserService {
 
         return userRepository.save(u);
     }
+
 
 
     public void changeMyPassword(String username, String currentPassword, String newPassword) {

@@ -48,22 +48,23 @@ public class UserAdminController {
             @Valid @RequestBody UpdateUserStatusRequest req,
             Authentication auth
     ) {
-        Long actorId = Long.valueOf(auth.getName()); // ✅ viene del JWT sub
-        User updated = userService.updateStatus(actorId, id, req.status());
+        String actorUsername = auth.getName(); // ✅ username
+        User updated = userService.updateStatus(actorUsername, id, req.status());
         return ResponseEntity.ok(toDto(updated));
     }
 
-    // ✅ CAMBIAR ROLE (USER/ADMIN)
     @PatchMapping("/{id}/role")
     public ResponseEntity<UserAdminDTO> updateRole(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRoleRequest req,
             Authentication auth
     ) {
-        Long actorId = Long.valueOf(auth.getName()); // ✅ viene del JWT sub
-        User updated = userService.updateRole(actorId, id, req.role());
+        String actorUsername = auth.getName(); // ✅ username
+        User updated = userService.updateRole(actorUsername, id, req.role());
         return ResponseEntity.ok(toDto(updated));
     }
+
+
 
     private UserAdminDTO toDto(User u) {
         return new UserAdminDTO(

@@ -11,47 +11,41 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
+	private final JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
-        this.jwtAuthFilter = jwtAuthFilter;
-    }
+	public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+		this.jwtAuthFilter = jwtAuthFilter;
+	}
 
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-            )
-            // Si no usas form login / basic, mejor apagarlos
-            .httpBasic(b -> b.disable())
-            .formLogin(f -> f.disable())
-            .authorizeHttpRequests(auth -> auth
-                // Preflight CORS (importante si alguna vez llamas directo a este MS)
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.disable())
+				.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+				// Si no usas form login / basic, mejor apagarlos
+				.httpBasic(b -> b.disable()).formLogin(f -> f.disable()).authorizeHttpRequests(auth -> auth
+						// Preflight CORS (importante si alguna vez llamas directo a este MS)
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // Públicos
-                .requestMatchers("/usuario/auth/register", "/usuario/auth/login").permitAll()
+						// Públicos
+						.requestMatchers("/usuario/auth/register", "/usuario/auth/login").permitAll()
 
-                // Autenticado (usuario logueado)
-                .requestMatchers("/usuario/auth/me").authenticated()
-                .requestMatchers("/usuario/ping").authenticated()
+						// Autenticado (usuario logueado)
+						.requestMatchers("/usuario/auth/me/**").authenticated()
 
-                // Admin (siempre bajo /usuario/admin/**)
-                .requestMatchers("/usuario/admin/**").hasRole("ADMIN")
+						.requestMatchers("/usuario/ping").authenticated()
 
-                // ✅ DEFAULT: cerrado
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+						// Admin (siempre bajo /usuario/admin/**)
+						.requestMatchers("/usuario/admin/**").hasRole("ADMIN")
 
-        return http.build();
-    }
+						// ✅ DEFAULT: cerrado
+						.anyRequest().authenticated())
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
 }

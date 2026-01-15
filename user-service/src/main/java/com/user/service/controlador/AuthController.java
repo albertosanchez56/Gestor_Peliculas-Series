@@ -66,10 +66,10 @@ public class AuthController {
             @Valid @RequestBody UpdateMeRequest req,
             Authentication auth
     ) {
-        Long userId = Long.parseLong(auth.getName()); // ← viene del JWT (sub)
+        String username = auth.getName();
 
         User updated = userService.updateMe(
-                userId,
+                username,
                 req.getDisplayName(),
                 req.getEmail()
         );
@@ -81,6 +81,8 @@ public class AuthController {
                 updated.getRole()
         ));
     }
+
+
 
 
     @PreAuthorize("isAuthenticated()")

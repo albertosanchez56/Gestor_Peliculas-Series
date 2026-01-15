@@ -39,18 +39,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             Claims claims = jwtService.parseClaims(token);
 
-            String userId = claims.getSubject(); // ✅ sub = id
+            // ✅ IMPORTANTE: usa username, no el sub
             String username = claims.get("username", String.class);
-            String role = claims.get("role", String.class); // "ROLE_ADMIN"
+            if (username == null || username.isBlank()) {
+                // fallback si algún token viejo no trae username
+                username = claims.getSubject();
+            }
+
+            String role = claims.get("role", String.class); // ej: "ROLE_ADMIN"
 
             var auth = new UsernamePasswordAuthenticationToken(
-                    userId, // ✅ principal = ID (string)
+                    username,
                     null,
                     List.of(new SimpleGrantedAuthority(role))
             );
-
-            // guardamos el username como extra
-            auth.setDetails(username);
 
             SecurityContextHolder.getContext().setAuthentication(auth);
         } catch (Exception ex) {
@@ -59,4 +61,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 }
