@@ -53,5 +53,11 @@ spring:
           uri: lb://MOVIE-SERVICE
           predicates:
             - Path=/tmdb/**
+        
+        - id: review-service
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/reviews/**
+
 
 

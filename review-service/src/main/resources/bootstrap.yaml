@@ -1,3 +1,6 @@
+server:
+  port: 0
+
 spring:
   application:
     name: review-service
@@ -5,3 +8,25 @@ spring:
     config:
       enabled: true
       uri: http://localhost:8081
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/pruebagestorreseñas
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+# Para Feign + resilience:
+resilience4j:
+  circuitbreaker:
+    instances:
+      userService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+      movieService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
