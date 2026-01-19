@@ -14,3 +14,6 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     prefer-ip-address: true
+
+internal:
+  api-key: ${INTERNAL_API_KEY:CHANGE_ME}
