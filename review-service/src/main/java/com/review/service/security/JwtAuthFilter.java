@@ -35,28 +35,31 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = header.substring("Bearer ".length()).trim();
+        String token = header.substring(7).trim();
 
         try {
             Claims claims = jwtService.parseClaims(token);
-            String username = jwtService.extractUsername(claims);
-            String role = jwtService.extractRole(claims);
 
-            // ROLE_ prefix para Spring Security
-            List<SimpleGrantedAuthority> auths = (role == null)
-                    ? List.of()
-                    : List.of(new SimpleGrantedAuthority("ROLE_" + role));
-
-            var auth = new UsernamePasswordAuthenticationToken(username, null, auths);
-
-            // guardamos userId en detalles para usarlo luego
             Long userId = jwtService.extractUserId(claims);
-            auth.setDetails(userId);
+            String username = jwtService.extractUsername(claims);
+            String role = jwtService.extractRole(claims); // "ROLE_USER" o "ROLE_ADMIN"
+
+            var auths = (role == null || role.isBlank())
+                    ? List.<SimpleGrantedAuthority>of()
+                    : List.of(new SimpleGrantedAuthority(role));
+
+            // ✅ principal = userId (para controllers)
+            var auth = new UsernamePasswordAuthenticationToken(
+                    String.valueOf(userId),
+                    null,
+                    auths
+            );
+
+            // ✅ details = username (por si lo quieres)
+            auth.setDetails(username);
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-
         } catch (Exception ex) {
-            // token inválido → no autenticamos
             SecurityContextHolder.clearContext();
         }
 

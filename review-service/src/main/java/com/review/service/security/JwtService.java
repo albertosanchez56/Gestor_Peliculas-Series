@@ -26,24 +26,19 @@ public class JwtService {
                 .getPayload();
     }
 
-    public String extractUsername(Claims claims) {
-        // en tu user-service auth.getName() = username
-        // normalmente está en "sub" (subject)
-        return claims.getSubject();
-    }
-
-    public String extractRole(Claims claims) {
-        // depende de cómo lo guardes: "role" o "roles"
-        // tú en user-service usas Role USER/ADMIN
-        Object role = claims.get("role");
-        return role == null ? null : role.toString();
-    }
-
+    // ✅ userId real: en tu user-service el subject ES el userId
     public Long extractUserId(Claims claims) {
-        // ideal: el token lleva userId como claim (ej: "userId")
-        Object v = claims.get("userId");
-        if (v == null) return null;
-        if (v instanceof Number n) return n.longValue();
-        return Long.valueOf(v.toString());
+        return Long.valueOf(claims.getSubject());
+    }
+
+    // ✅ username real: lo guardas como claim "username"
+    public String extractUsername(Claims claims) {
+        String username = claims.get("username", String.class);
+        return (username == null || username.isBlank()) ? null : username;
+    }
+
+    // ✅ role real: en user-service ya viene con "ROLE_USER"/"ROLE_ADMIN"
+    public String extractRole(Claims claims) {
+        return claims.get("role", String.class);
     }
 }
