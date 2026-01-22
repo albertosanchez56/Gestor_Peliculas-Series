@@ -26,19 +26,19 @@ public class JwtService {
                 .getPayload();
     }
 
-    // ✅ userId real: en tu user-service el subject ES el userId
+    //  userId real: en tu user-service el subject ES el userId
+    public String extractUsername(Claims claims) {
+        return claims.get("username", String.class);
+    }
+
     public Long extractUserId(Claims claims) {
+        // subject = userId
         return Long.valueOf(claims.getSubject());
     }
 
-    // ✅ username real: lo guardas como claim "username"
-    public String extractUsername(Claims claims) {
-        String username = claims.get("username", String.class);
-        return (username == null || username.isBlank()) ? null : username;
-    }
-
-    // ✅ role real: en user-service ya viene con "ROLE_USER"/"ROLE_ADMIN"
     public String extractRole(Claims claims) {
+        // aquí te viene "ROLE_USER" ya prefijado
         return claims.get("role", String.class);
     }
+
 }
