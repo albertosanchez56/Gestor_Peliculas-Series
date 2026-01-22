@@ -34,6 +34,8 @@ import com.movie.service.tmdb.CastImportService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.PatchMapping;
 // Para ResponseStatusException
 
 @RestController
@@ -128,6 +130,8 @@ public class MovieController {
 	  var dto = p.getContent().stream().map(this::toDto).toList();
 	  return ResponseEntity.ok(dto);
 	}
+	
+	
 
 
 	// ---------- Helpers privados (DRY) ----------
@@ -157,4 +161,21 @@ public class MovieController {
 	        m.getAverageRating() // si no existe en la entidad, pásalo como null o quítalo del DTO
 	    );
 	}
+	
+
+	@PatchMapping(
+	    value = "/internal/movies/{id}/aggregates",
+	    consumes = MediaType.APPLICATION_JSON_VALUE
+	)
+	public ResponseEntity<Void> updateAggregates(
+	    @PathVariable Long id,
+	    @RequestBody AggregatesRequest body
+	) {
+	    movieService.updateAggregates(id, body.averageRating(), body.voteCount());
+	    return ResponseEntity.noContent().build();
+	}
+
+	// DTO mínimo (lo dejamos aquí para no crear más archivos)
+	public record AggregatesRequest(Double averageRating, Integer voteCount) {}
+
 }

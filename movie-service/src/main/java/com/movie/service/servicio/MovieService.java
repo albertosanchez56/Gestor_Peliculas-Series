@@ -154,4 +154,16 @@ public class MovieService {
         if (req.trailerUrl() != null)        m.setTrailerUrl(req.trailerUrl());
         if (req.ageRating() != null)         m.setAgeRating(req.ageRating());
     }
+    
+    @Transactional
+    public void updateAggregates(Long id, Double avg, Integer count) {
+        Movie m = movieRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("No existe la pelicula con el ID: " + id));
+
+        m.setAverageRating(avg);
+        m.setVoteCount(count);
+
+        movieRepository.save(m);
+    }
+
 }

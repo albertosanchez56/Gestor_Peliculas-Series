@@ -23,7 +23,7 @@ public record MovieRequest(
     @Positive(message = "El ID del director debe ser positivo")
     Long directorId,
 
-    // ¡OJO! Solo UNA vez @Positive en el ELEMENTO
+    //Solo UNA vez @Positive en el ELEMENTO
     @NotNull(message = "Debe enviar la lista de géneros")
     @Size(min = 1, message = "Debe haber al menos un género")
     List<Long> genreIds,
