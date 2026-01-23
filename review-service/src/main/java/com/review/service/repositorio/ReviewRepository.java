@@ -29,5 +29,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                                        @Param("status") ReviewStatus status);
     
     List<Review> findByUserIdOrderByCreatedAtDesc(Long userId);
+    
+    
 
 }

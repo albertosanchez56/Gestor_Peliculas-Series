@@ -2,7 +2,9 @@ package com.review.service.service;
 
 import com.review.service.Entidades.Review;
 import com.review.service.Entidades.Review.ReviewStatus;
+import com.review.service.client.MovieClient;
 import com.review.service.dto.CreateReviewRequest;
+import com.review.service.dto.MovieAggregatesRequest;
 import com.review.service.dto.MovieStatsDTO;
 import com.review.service.dto.ReviewDTO;
 import com.review.service.dto.UpdateReviewRequest;
@@ -17,9 +19,11 @@ import java.util.List;
 public class ReviewService {
 
     private final ReviewRepository repo;
+    private final MovieClient movieClient;
 
-    public ReviewService(ReviewRepository repo) {
+    public ReviewService(ReviewRepository repo, MovieClient movieClient) {
         this.repo = repo;
+        this.movieClient = movieClient;
     }
 
     public ReviewDTO create(Long userId, CreateReviewRequest req) {
@@ -36,6 +40,10 @@ public class ReviewService {
         r.setStatus(ReviewStatus.VISIBLE);
 
         Review saved = repo.save(r);
+
+        // ✅ tras crear, recalcular y actualizar en movie-service
+        syncMovieAggregates(saved.getMovieId());
+
         return toDto(saved);
     }
 
@@ -47,8 +55,6 @@ public class ReviewService {
     public MovieStatsDTO stats(Long movieId) {
         long count = repo.countByMovieIdAndStatus(movieId, ReviewStatus.VISIBLE);
         Double avg = repo.avgRatingByMovieIdAndStatus(movieId, ReviewStatus.VISIBLE);
-
-        // avg puede ser null si no hay reviews
         return new MovieStatsDTO(avg, count);
     }
 
@@ -60,11 +66,16 @@ public class ReviewService {
             throw new ApiException(HttpStatus.FORBIDDEN, "No puedes editar una review que no es tuya.");
         }
 
+        Long movieId = r.getMovieId();
+        ReviewStatus oldStatus = r.getStatus();
+
         boolean changed = false;
+        boolean affectsAggregates = false;
 
         if (req.getRating() != null) {
             r.setRating(req.getRating());
             changed = true;
+            affectsAggregates = true; // rating afecta a la media
         }
         if (req.getComment() != null) {
             r.setComment(req.getComment());
@@ -76,7 +87,11 @@ public class ReviewService {
         }
         if (req.getStatus() != null && !req.getStatus().isBlank()) {
             try {
-                r.setStatus(ReviewStatus.valueOf(req.getStatus().toUpperCase()));
+                ReviewStatus newStatus = ReviewStatus.valueOf(req.getStatus().toUpperCase());
+                if (newStatus != oldStatus) {
+                    affectsAggregates = true; // status afecta a count/avg (VISIBLE/HIDDEN)
+                }
+                r.setStatus(newStatus);
                 changed = true;
             } catch (IllegalArgumentException ex) {
                 throw new ApiException(HttpStatus.BAD_REQUEST, "Status inválido. Usa VISIBLE o HIDDEN.");
@@ -86,6 +101,12 @@ public class ReviewService {
         if (changed) r.setEdited(true);
 
         Review saved = repo.save(r);
+
+        // ✅ solo sincroniza si realmente afecta a agregados
+        if (affectsAggregates) {
+            syncMovieAggregates(movieId);
+        }
+
         return toDto(saved);
     }
 
@@ -97,7 +118,34 @@ public class ReviewService {
             throw new ApiException(HttpStatus.FORBIDDEN, "No puedes borrar una review que no es tuya.");
         }
 
+        Long movieId = r.getMovieId();
         repo.delete(r);
+
+        // ✅ tras borrar, recalcular y actualizar en movie-service
+        syncMovieAggregates(movieId);
+    }
+
+    public List<ReviewDTO> myReviews(Long userId) {
+        return repo.findByUserIdOrderByCreatedAtDesc(userId)
+                .stream().map(this::toDto).toList();
+    }
+
+    private void syncMovieAggregates(Long movieId) {
+        long countLong = repo.countByMovieIdAndStatus(movieId, ReviewStatus.VISIBLE);
+        Double avg = repo.avgRatingByMovieIdAndStatus(movieId, ReviewStatus.VISIBLE);
+
+        // avg puede ser null si no hay reviews visibles (OK)
+        // movie-service espera voteCount como Integer en tu AggregatesRequest
+        int count = (countLong > Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int) countLong;
+
+        var body = new MovieAggregatesRequest(avg, count);
+
+        try {
+            movieClient.updateAggregates(movieId, body);
+        } catch (Exception ex) {
+            // Estrategia: consistencia eventual. No rompemos create/update/delete por un fallo remoto.
+            // Si prefieres, aquí podrías loguear el error.
+        }
     }
 
     private ReviewDTO toDto(Review r) {
@@ -114,9 +162,4 @@ public class ReviewService {
                 r.getUpdatedAt()
         );
     }
-    
-    public List<ReviewDTO> myReviews(Long userId){
-    	   return repo.findByUserIdOrderByCreatedAtDesc(userId).stream().map(this::toDto).toList();
-    	}
-
 }
