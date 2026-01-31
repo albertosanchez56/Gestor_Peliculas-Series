@@ -3,6 +3,7 @@ package com.review.service.controller;
 import com.review.service.dto.CreateReviewRequest;
 import com.review.service.dto.MovieStatsDTO;
 import com.review.service.dto.ReviewDTO;
+import com.review.service.dto.ReviewViewDTO;
 import com.review.service.dto.UpdateReviewRequest;
 import com.review.service.service.ReviewService;
 import jakarta.validation.Valid;
@@ -22,19 +23,27 @@ public class ReviewController {
         this.service = service;
     }
 
-    //Público: reviews visibles de una película
+    /* =========================
+       PÚBLICO
+       ========================= */
+
+    // Público: reviews visibles de una película (con displayName y fechas)
     @GetMapping("/movie/{movieId}")
-    public List<ReviewDTO> listByMovie(@PathVariable Long movieId) {
-        return service.listVisibleByMovie(movieId);
+    public List<ReviewViewDTO> listByMovie(@PathVariable Long movieId) {
+        return service.listVisibleByMovieView(movieId);
     }
 
-    //Público: stats de una película
+    // Público: stats de una película
     @GetMapping("/movie/{movieId}/stats")
     public MovieStatsDTO stats(@PathVariable Long movieId) {
         return service.stats(movieId);
     }
 
-    //Privado: crear review
+    /* =========================
+       PRIVADO (JWT)
+       ========================= */
+
+    // Privado: crear review
     @PostMapping
     public ResponseEntity<ReviewDTO> create(@Valid @RequestBody CreateReviewRequest req,
                                            Authentication auth) {
@@ -43,7 +52,7 @@ public class ReviewController {
         return ResponseEntity.ok(dto);
     }
 
-    //Privado: editar mi review
+    // Privado: editar mi review
     @PatchMapping("/{reviewId}")
     public ReviewDTO update(@PathVariable Long reviewId,
                             @Valid @RequestBody UpdateReviewRequest req,
@@ -52,7 +61,7 @@ public class ReviewController {
         return service.updateMy(userId, reviewId, req);
     }
 
-    //Privado: borrar mi review
+    // Privado: borrar mi review
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> delete(@PathVariable Long reviewId,
                                        Authentication auth) {
@@ -60,11 +69,24 @@ public class ReviewController {
         service.deleteMy(userId, reviewId);
         return ResponseEntity.noContent().build();
     }
-    
+
+    // Privado: mis reviews (lista)
     @GetMapping("/me")
-    public List<ReviewDTO> me(Authentication auth){
-       Long userId = Long.valueOf(auth.getName());
-       return service.myReviews(userId);
+    public List<ReviewDTO> me(Authentication auth) {
+        Long userId = Long.valueOf(auth.getName());
+        return service.myReviews(userId);
     }
 
+    //Privado: mi review de UNA película (para ocultar el formulario en el front)
+    @GetMapping("/me/movie/{movieId}")
+    public ReviewViewDTO myReviewForMovie(@PathVariable Long movieId,
+                                          Authentication auth) {
+        Long userId = Long.valueOf(auth.getName());
+        return service.myReviewForMovie(userId, movieId);
+    }
+    
+    @GetMapping("/movie/{movieId}/view")
+    public List<ReviewViewDTO> listByMovieView(@PathVariable Long movieId) {
+        return service.listVisibleByMovieView(movieId);
+    }
 }

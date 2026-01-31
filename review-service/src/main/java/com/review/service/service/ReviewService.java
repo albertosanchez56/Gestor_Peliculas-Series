@@ -18,19 +18,13 @@ public class ReviewService {
     private final MovieClient movieClient;
     private final RemoteResolverService remoteResolverService;
 
-    public ReviewService(
-            ReviewRepository repo,
-            MovieClient movieClient,
-            RemoteResolverService remoteResolverService
-    ) {
+    public ReviewService(ReviewRepository repo,
+                         MovieClient movieClient,
+                         RemoteResolverService remoteResolverService) {
         this.repo = repo;
         this.movieClient = movieClient;
         this.remoteResolverService = remoteResolverService;
     }
-
-    /* =========================
-       CREATE
-       ========================= */
 
     public ReviewDTO create(Long userId, CreateReviewRequest req) {
         if (repo.existsByMovieIdAndUserId(req.getMovieId(), userId)) {
@@ -47,25 +41,12 @@ public class ReviewService {
 
         Review saved = repo.save(r);
 
-        // ✅ recalcular y sincronizar agregados en movie-service
         syncMovieAggregates(saved.getMovieId());
 
         return toDto(saved);
     }
 
-    /* =========================
-       LISTADOS
-       ========================= */
-
-    /** Público: lista visible (DTO simple) */
-    public List<ReviewDTO> listVisibleByMovie(Long movieId) {
-        return repo.findByMovieIdAndStatusOrderByCreatedAtDesc(movieId, ReviewStatus.VISIBLE)
-                .stream()
-                .map(this::toDto)
-                .toList();
-    }
-
-    /** Público: lista visible con displayName (DTO de vista para el front) */
+    // ✅ NUEVO: listado "enriquecido" con displayName
     public List<ReviewViewDTO> listVisibleByMovieView(Long movieId) {
         return repo.findByMovieIdAndStatusOrderByCreatedAtDesc(movieId, ReviewStatus.VISIBLE)
                 .stream()
@@ -73,34 +54,16 @@ public class ReviewService {
                 .toList();
     }
 
-    /** Privado: mis reviews (lista) */
-    public List<ReviewDTO> myReviews(Long userId) {
-        return repo.findByUserIdOrderByCreatedAtDesc(userId)
-                .stream()
-                .map(this::toDto)
-                .toList();
+    public List<ReviewDTO> listVisibleByMovie(Long movieId) {
+        return repo.findByMovieIdAndStatusOrderByCreatedAtDesc(movieId, ReviewStatus.VISIBLE)
+                .stream().map(this::toDto).toList();
     }
-
-    /** Privado: mi review de una película (para ocultar formulario en front) */
-    public ReviewViewDTO myReviewForMovie(Long userId, Long movieId) {
-        Review r = repo.findByMovieIdAndUserId(movieId, userId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "No tienes review para esta película."));
-        return toViewDto(r);
-    }
-
-    /* =========================
-       STATS
-       ========================= */
 
     public MovieStatsDTO stats(Long movieId) {
         long count = repo.countByMovieIdAndStatus(movieId, ReviewStatus.VISIBLE);
         Double avg = repo.avgRatingByMovieIdAndStatus(movieId, ReviewStatus.VISIBLE);
         return new MovieStatsDTO(avg, count);
     }
-
-    /* =========================
-       UPDATE
-       ========================= */
 
     public ReviewDTO updateMy(Long userId, Long reviewId, UpdateReviewRequest req) {
         Review r = repo.findById(reviewId)
@@ -151,10 +114,6 @@ public class ReviewService {
         return toDto(saved);
     }
 
-    /* =========================
-       DELETE
-       ========================= */
-
     public void deleteMy(Long userId, Long reviewId) {
         Review r = repo.findById(reviewId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Review no encontrada."));
@@ -169,29 +128,29 @@ public class ReviewService {
         syncMovieAggregates(movieId);
     }
 
-    /* =========================
-       SYNC AGGREGATES
-       ========================= */
+    public List<ReviewDTO> myReviews(Long userId) {
+        return repo.findByUserIdOrderByCreatedAtDesc(userId)
+                .stream().map(this::toDto).toList();
+    }
 
     private void syncMovieAggregates(Long movieId) {
         long countLong = repo.countByMovieIdAndStatus(movieId, ReviewStatus.VISIBLE);
         Double avg = repo.avgRatingByMovieIdAndStatus(movieId, ReviewStatus.VISIBLE);
-
         int count = (countLong > Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int) countLong;
 
-        MovieAggregatesRequest body = new MovieAggregatesRequest(avg, count);
+        var body = new MovieAggregatesRequest(avg, count);
 
         try {
             movieClient.updateAggregates(movieId, body);
-        } catch (Exception ex) {
-            // consistencia eventual: no rompemos la operación por fallo remoto
-            // aquí podrías loguear si quieres
+        } catch (Exception ignored) {
         }
     }
-
-    /* =========================
-       MAPPERS
-       ========================= */
+    
+    public ReviewViewDTO myReviewForMovie(Long userId, Long movieId) {
+        return repo.findByMovieIdAndUserId(movieId, userId)
+                .map(this::toViewDto)   // usa tu método que mete displayName
+                .orElse(null);
+    }
 
     private ReviewDTO toDto(Review r) {
         return new ReviewDTO(
@@ -209,17 +168,14 @@ public class ReviewService {
     }
 
     private ReviewViewDTO toViewDto(Review r) {
-        // ✅ devuelve UserPublicDTO (no Object)
         UserPublicDTO user = remoteResolverService.resolveUser(r.getUserId());
-        String displayName = (user == null || user.displayName() == null || user.displayName().isBlank())
-                ? "Usuario"
-                : user.displayName();
+        String display = (user != null && user.displayName() != null) ? user.displayName() : "Usuario";
 
         return new ReviewViewDTO(
                 r.getId(),
                 r.getMovieId(),
                 r.getUserId(),
-                displayName,
+                display,
                 r.getRating(),
                 r.getComment(),
                 r.isContainsSpoilers(),
