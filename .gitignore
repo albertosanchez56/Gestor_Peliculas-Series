@@ -1,2 +1,10 @@
+# Zipkin server (jar, zip, etc.)
 zipkin-server-3.4.1-exec.jar
+zipkin-server-*
+*zipking-server*
+
+# Mailmap
+.mailmap
+mailmap.txt
+
 imagenes/
