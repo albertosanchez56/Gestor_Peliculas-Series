@@ -11,11 +11,14 @@ eureka:
     register-with-eureka: true
     service-url:
       default-zone: http://localhost:8761/eureka
-    instance:
-      instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-spring:
-  application:
-    zipkin: http://localhost:9411
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+# Zipkin (opcional)
+management:
+  tracing:
+    sampling:
+      probability: 1.0
 
 internal:
   api-key: ${INTERNAL_API_KEY:CHANGE_ME}

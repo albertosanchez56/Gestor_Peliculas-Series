@@ -7,4 +7,7 @@ zipkin-server-*
 .mailmap
 mailmap.txt
 
+# Variables de entorno (keys)
+.env
+
 imagenes/

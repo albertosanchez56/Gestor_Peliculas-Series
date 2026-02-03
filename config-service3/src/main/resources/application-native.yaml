@@ -1,0 +1,9 @@
+# Perfil native: usa config-data local en lugar de Git.
+# Arrancar con: --spring.profiles.active=native
+# (Desde la raíz del repo, config-data está en ../config-data respecto a config-service3)
+spring:
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:../config-data

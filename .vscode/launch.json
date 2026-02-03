@@ -1,0 +1,57 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "1 Config Server",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.config.service3.ConfigService3Application",
+      "projectName": "config-service3"
+    },
+    {
+      "name": "2 Eureka",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.eureka.service3.EurekaService3Application",
+      "projectName": "eureka-service3"
+    },
+    {
+      "name": "3 User Service",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.user.service.UserServiceApplication",
+      "projectName": "user-service",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "3 Movie Service",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.movie.service.MovieServiceApplication",
+      "projectName": "movie-service",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "3 Review Service",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.review.service.ReviewServiceApplication",
+      "projectName": "review-service",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "4 Gateway",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.gateway.service3.GatewayService3Application",
+      "projectName": "gateway-service3"
+    },
+    {
+      "name": "Favoritelist Service",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.favoritelist.service.FavoritelistServiceApplication",
+      "projectName": "favoritelist-service"
+    }
+  ]
+}

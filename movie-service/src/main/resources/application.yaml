@@ -1,0 +1,3 @@
+# Fallback local: arranque sin Config Server o si no devuelve esta propiedad
+internal:
+  api-key: ${INTERNAL_API_KEY:dev-internal-key}

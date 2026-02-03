@@ -1,0 +1,59 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "mvn: Config Server",
+      "type": "shell",
+      "command": "mvnw.cmd",
+      "args": ["spring-boot:run"],
+      "options": { "cwd": "${workspaceFolder}/config-service3" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "mvn: Eureka",
+      "type": "shell",
+      "command": "mvnw.cmd",
+      "args": ["spring-boot:run"],
+      "options": { "cwd": "${workspaceFolder}/eureka-service3" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "mvn: User Service",
+      "type": "shell",
+      "command": "mvnw.cmd",
+      "args": ["spring-boot:run"],
+      "options": { "cwd": "${workspaceFolder}/user-service" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "mvn: Movie Service",
+      "type": "shell",
+      "command": "mvnw.cmd",
+      "args": ["spring-boot:run"],
+      "options": { "cwd": "${workspaceFolder}/movie-service" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "mvn: Review Service",
+      "type": "shell",
+      "command": "mvnw.cmd",
+      "args": ["spring-boot:run"],
+      "options": { "cwd": "${workspaceFolder}/review-service" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "mvn: Gateway",
+      "type": "shell",
+      "command": "mvnw.cmd",
+      "args": ["spring-boot:run"],
+      "options": { "cwd": "${workspaceFolder}/gateway-service3" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    }
+  ]
+}
