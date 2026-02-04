@@ -28,7 +28,7 @@ management:
 
 
 tmdb:
-  api-key: ${TMDB_API_KEY}
+  api-key: ${TMDB_API_KEY:}
   base-url: https://api.themoviedb.org/3
   images-base: https://image.tmdb.org/t/p
   poster-size: /w500

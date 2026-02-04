@@ -71,6 +71,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+		<!-- Sin spring-boot-starter-security: evita 403 en rutas como /tmdb/** -->
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

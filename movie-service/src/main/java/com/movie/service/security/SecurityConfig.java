@@ -2,6 +2,7 @@ package com.movie.service.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,7 +18,19 @@ public class SecurityConfig {
         this.internalApiKeyFilter = internalApiKeyFilter;
     }
 
+    /** Cadena solo para /tmdb/**: sin InternalApiKeyFilter, permitAll. Evita 403 desde el front vía Gateway. */
     @Bean
+    @Order(1)
+    SecurityFilterChain tmdbFilterChain(HttpSecurity http) throws Exception {
+        return http
+            .securityMatcher("/tmdb/**")
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .build();
+    }
+
+    @Bean
+    @Order(2)
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
@@ -33,11 +46,13 @@ public class SecurityConfig {
 
             	    // públicos
             	    .requestMatchers("/peliculas/**").permitAll()
+            	    .requestMatchers("/directores/**").permitAll()
+            	    .requestMatchers("/generos/**").permitAll()
 
             	    .anyRequest().denyAll()
             	);
 
-        // filtro interno antes de todo
+        // filtro interno antes de todo (no aplica a /tmdb/** por la cadena anterior)
         http.addFilterBefore(internalApiKeyFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
