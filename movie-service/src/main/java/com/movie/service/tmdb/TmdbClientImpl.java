@@ -1,6 +1,10 @@
 // src/main/java/com/movie/service/tmdb/TmdbClientImpl.java
 package com.movie.service.tmdb;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,27 +22,40 @@ public class TmdbClientImpl implements TmdbClient {
 
     private String url(String path) { return props.getBaseUrl() + path; }
 
-    private String withKey(String base) {
-        return UriComponentsBuilder.fromHttpUrl(base)
-            .queryParam("api_key", props.getApiKey())
-            .build().toUriString();
+    private UriComponentsBuilder baseWithKey(String base) {
+        var b = UriComponentsBuilder.fromHttpUrl(base);
+        if (!props.isUseBearerAuth() && props.getApiKey() != null) {
+            b.queryParam("api_key", props.getApiKey());
+        }
+        return b;
     }
 
     private String withKeyAndLang(String base, String languageOrNull) {
-        var b = UriComponentsBuilder.fromHttpUrl(base)
-            .queryParam("api_key", props.getApiKey());
+        var b = baseWithKey(base);
         if (languageOrNull != null && !languageOrNull.isBlank()) {
             b.queryParam("language", languageOrNull);
         }
         return b.build().toUriString();
     }
-    
+
     private String withKeyAndLangCustom(String base, String lang) {
-        return UriComponentsBuilder.fromHttpUrl(base)
-            .queryParam("api_key", props.getApiKey())
-            .queryParam("language", lang)
-            .build()
-            .toUriString();
+        return baseWithKey(base).queryParam("language", lang).build().toUriString();
+    }
+
+    private HttpHeaders bearerHeaders() {
+        HttpHeaders h = new HttpHeaders();
+        if (props.isUseBearerAuth() && props.getApiKey() != null && !props.getApiKey().isBlank()) {
+            h.setBearerAuth(props.getApiKey());
+        }
+        return h;
+    }
+
+    private <T> T get(String uri, Class<T> responseType) {
+        if (props.isUseBearerAuth()) {
+            ResponseEntity<T> re = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(bearerHeaders()), responseType);
+            return re.getBody();
+        }
+        return restTemplate.getForObject(uri, responseType);
     }
 
     // ==== Detalles ====
@@ -49,7 +66,7 @@ public class TmdbClientImpl implements TmdbClient {
     @Override
     public TmdbMovieDetails getMovieDetails(long tmdbId, String languageOrNull) {
         String u = withKeyAndLang(url("/movie/" + tmdbId), languageOrNull);
-        return restTemplate.getForObject(u, TmdbMovieDetails.class);
+        return get(u, TmdbMovieDetails.class);
     }
 
     // ==== Créditos ====
@@ -60,7 +77,7 @@ public class TmdbClientImpl implements TmdbClient {
     @Override
     public TmdbCredits getMovieCredits(long tmdbId, String languageOrNull) {
         String u = withKeyAndLang(url("/movie/" + tmdbId + "/credits"), languageOrNull);
-        return restTemplate.getForObject(u, TmdbCredits.class);
+        return get(u, TmdbCredits.class);
     }
 
     // ==== Vídeos ====
@@ -71,51 +88,46 @@ public class TmdbClientImpl implements TmdbClient {
     }
     @Override
     public TmdbVideosResponse getMovieVideos(long tmdbId, String languageOrNull, String includeVideoLanguageOrNull) {
-        var b = UriComponentsBuilder.fromHttpUrl(url("/movie/" + tmdbId + "/videos"))
-            .queryParam("api_key", props.getApiKey());
+        var b = baseWithKey(url("/movie/" + tmdbId + "/videos"));
         if (languageOrNull != null && !languageOrNull.isBlank()) {
             b.queryParam("language", languageOrNull);
         }
         if (includeVideoLanguageOrNull != null && !includeVideoLanguageOrNull.isBlank()) {
-            // Ej: "es,en,null" para incluir vídeos en varios idiomas
             b.queryParam("include_video_language", includeVideoLanguageOrNull);
         }
         String u = b.build().toUriString();
-        return restTemplate.getForObject(u, TmdbVideosResponse.class);
+        return get(u, TmdbVideosResponse.class);
     }
     @Override
     public TmdbPersonDetails getPersonDetails(long personId) {
         String u = withKeyAndLang(url("/person/" + personId), props.getLanguage());
-        return restTemplate.getForObject(u, TmdbPersonDetails.class);
+        return get(u, TmdbPersonDetails.class);
     }
-    
+
     @Override
     public TmdbVideosResponse getMovieVideos(long tmdbId, String lang) {
         String u = withKeyAndLangCustom(url("/movie/" + tmdbId + "/videos"), lang);
-        return restTemplate.getForObject(u, TmdbVideosResponse.class);
+        return get(u, TmdbVideosResponse.class);
     }
 
-    // ==== Release dates y Popular sin cambios ====
     @Override
     public TmdbReleaseDatesResponse getMovieReleaseDates(long tmdbId) {
-        String u = UriComponentsBuilder.fromHttpUrl(url("/movie/" + tmdbId + "/release_dates"))
-            .queryParam("api_key", props.getApiKey())
-            .build().toUriString();
-        return restTemplate.getForObject(u, TmdbReleaseDatesResponse.class);
+        String u = baseWithKey(url("/movie/" + tmdbId + "/release_dates")).build().toUriString();
+        return get(u, TmdbReleaseDatesResponse.class);
     }
+
     @Override
     public TmdbPopularResponse getPopular(int page) {
-        String u = UriComponentsBuilder.fromHttpUrl(url("/movie/popular"))
-            .queryParam("api_key", props.getApiKey())
+        String u = baseWithKey(url("/movie/popular"))
             .queryParam("language", props.getLanguage())
             .queryParam("page", page)
             .build().toUriString();
-        return restTemplate.getForObject(u, TmdbPopularResponse.class);
+        return get(u, TmdbPopularResponse.class);
     }
-    
+
     @Override
     public TmdbPersonDetails getPersonDetails(long personId, String language) {
         String u = withKeyAndLang(url("/person/" + personId), language);
-        return restTemplate.getForObject(u, TmdbPersonDetails.class);
+        return get(u, TmdbPersonDetails.class);
     }
 }

@@ -9,8 +9,10 @@ import org.springframework.validation.annotation.Validated;
 public class TmdbProps {
 
 	private String apiKey;
-	  private String baseUrl;
-	  private String imagesBase;
+	private String baseUrl;
+	private String imagesBase;
+	/** Si true, usa Authorization: Bearer apiKey (token v4). Si false, usa api_key en query (v3). */
+	private boolean useBearerAuth;
 	  private String posterSize;
 	  private String backdropSize;
 	  private String profileSize;   // <-- añade esto
@@ -24,6 +26,14 @@ public class TmdbProps {
 
 	public void setApiKey(String apiKey) {
 		this.apiKey = apiKey;
+	}
+
+	public boolean isUseBearerAuth() {
+		return useBearerAuth;
+	}
+
+	public void setUseBearerAuth(boolean useBearerAuth) {
+		this.useBearerAuth = useBearerAuth;
 	}
 
 	public String getBaseUrl() {
