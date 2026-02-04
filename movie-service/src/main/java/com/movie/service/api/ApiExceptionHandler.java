@@ -2,10 +2,13 @@
 package com.movie.service.api;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.validation.FieldError;
+
 import jakarta.validation.ConstraintViolationException;
 
 import java.time.OffsetDateTime;
@@ -65,5 +68,23 @@ public class ApiExceptionHandler {
       "status", 400,
       "message", ex.getMessage()
     );
+  }
+
+  /** TMDB devuelve 401 cuando la API key es inválida o es un token v4 enviado como api_key. */
+  @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
+  public ResponseEntity<Map<String, Object>> handleTmdbUnauthorized(HttpClientErrorException ex) {
+    String body = ex.getResponseBodyAsString();
+    String hint = "Comprueba que TMDB_API_KEY sea la API Key (v3) correcta. "
+        + "Si usas un token de lectura v4, añade en config: tmdb.use-bearer-auth: true";
+    if (body != null && (body.contains("Invalid API key") || body.contains("status_code\":7"))) {
+      hint = "TMDB rechazó la API key. " + hint;
+    }
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(Map.of(
+            "timestamp", OffsetDateTime.now(),
+            "status", 400,
+            "message", hint
+        ));
   }
 }

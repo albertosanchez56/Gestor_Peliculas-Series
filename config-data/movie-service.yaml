@@ -25,9 +25,11 @@ management:
 internal:
   api-key: ${INTERNAL_API_KEY:CHANGE_ME}
 
-# TMDB API (v3: api_key en query; v4: usar tmdb.use-bearer-auth: true y token como Bearer)
+# TMDB API
+# - v3: API Key (32 caracteres) → deja use-bearer-auth: false
+# - v4: API Read Access Token (largo) → pon use-bearer-auth: true o tendrás "Invalid API key"
 tmdb:
   base-url: https://api.themoviedb.org/3
   api-key: ${TMDB_API_KEY:}
   language: es-ES
-  # use-bearer-auth: true   # descomenta si usas token de lectura v4 (Authorization: Bearer)
+  use-bearer-auth: true   # true = token v4 (Bearer). Si usas API Key v3, cambia a false
