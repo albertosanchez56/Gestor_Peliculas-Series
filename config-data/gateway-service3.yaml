@@ -49,7 +49,12 @@ spring:
           predicates:
             - Path=/directores/**
             
-        # TMDB: manejado por TmdbProxyFilter (evita 403 de la ruta normal)
+        # TMDB → movie-service (seguridad /tmdb ya permitida en movie-service)
+        - id: movie-service-tmdb
+          uri: lb://MOVIE-SERVICE
+          predicates:
+            - Path=/tmdb/**
+
         - id: review-service
           uri: lb://REVIEW-SERVICE
           predicates:
