@@ -28,6 +28,6 @@ internal:
 # TMDB API (v3: api_key en query; v4: usar tmdb.use-bearer-auth: true y token como Bearer)
 tmdb:
   base-url: https://api.themoviedb.org/3
-  api-key: ${TMDB_API_KEY}
+  api-key: ${TMDB_API_KEY:}
   language: es-ES
   # use-bearer-auth: true   # descomenta si usas token de lectura v4 (Authorization: Bearer)
