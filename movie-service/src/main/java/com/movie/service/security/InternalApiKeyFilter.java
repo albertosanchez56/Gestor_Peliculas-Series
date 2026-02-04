@@ -37,8 +37,8 @@ public class InternalApiKeyFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         if (path == null) return true;
-        // Solo exigir X-Internal-Token en rutas internas; /tmdb/** llega desde el front vía Gateway
-        if (path.startsWith("/tmdb/")) return true;
+        // Solo exigir X-Internal-Token en rutas internas; /tmdb y /tmdb/** llegan desde el front vía Gateway
+        if (path.startsWith("/tmdb") || path.contains("/tmdb/")) return true;
         if (!path.startsWith("/peliculas/internal/")) return true;
         return false;
     }

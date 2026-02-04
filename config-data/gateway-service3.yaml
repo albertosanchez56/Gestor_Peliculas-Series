@@ -11,6 +11,9 @@ eureka:
     hostname: localhost
 
 spring:
+  # Evita 403: desactiva seguridad reactiva si viene por dependencia transitiva
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration
   cloud:
     gateway:
       discovery:
@@ -49,11 +52,13 @@ spring:
           predicates:
             - Path=/directores/**
             
-        # TMDB → movie-service (seguridad /tmdb ya permitida en movie-service)
+        # TMDB → movie-service (envía token interno por si el filtro lo exige)
         - id: movie-service-tmdb
           uri: lb://MOVIE-SERVICE
           predicates:
             - Path=/tmdb/**
+          filters:
+            - AddRequestHeader=X-Internal-Token, ${INTERNAL_API_KEY:dev-internal-key}
 
         - id: review-service
           uri: lb://REVIEW-SERVICE
