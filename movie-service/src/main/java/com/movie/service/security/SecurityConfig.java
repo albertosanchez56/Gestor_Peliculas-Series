@@ -23,7 +23,11 @@ public class SecurityConfig {
     @Order(1)
     SecurityFilterChain tmdbFilterChain(HttpSecurity http) throws Exception {
         return http
-            .securityMatcher("/tmdb/**")
+            // Matcher por URI por si el path llega con otro formato (proxy, etc.)
+            .securityMatcher(request -> {
+                String uri = request.getRequestURI();
+                return uri != null && (uri.startsWith("/tmdb") || uri.contains("/tmdb/"));
+            })
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             .build();

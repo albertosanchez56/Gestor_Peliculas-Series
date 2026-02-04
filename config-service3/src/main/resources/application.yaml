@@ -1,6 +1,8 @@
 server:
   port: 8081
 spring:
+  application:
+    name: config-server
   cloud:
     config:
       server:
@@ -8,5 +10,4 @@ spring:
           default-label: main
           uri: https://github.com/albertosanchez56/Gestor_Peliculas-Series.git
           search-paths: config-data
-  application:
-    name: config-server
+# Para usar config-data LOCAL (sin subir a GitHub): arranca con --spring.profiles.active=native

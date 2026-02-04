@@ -49,14 +49,7 @@ spring:
           predicates:
             - Path=/directores/**
             
-        - id: movie-service-tmdb
-          uri: lb://MOVIE-SERVICE
-          predicates:
-            - Path=/tmdb/**
-          filters:
-            # Asegura que movie-service reciba el token interno (por si el filtro se aplica)
-            - AddRequestHeader=X-Internal-Token, ${INTERNAL_API_KEY:dev-internal-key}
-        
+        # TMDB: manejado por TmdbProxyFilter (evita 403 de la ruta normal)
         - id: review-service
           uri: lb://REVIEW-SERVICE
           predicates:
