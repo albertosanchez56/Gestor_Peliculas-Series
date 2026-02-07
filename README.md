@@ -247,6 +247,8 @@ export INTERNAL_API_KEY="clave-interna-segura"
 export TMDB_API_KEY="tu-api-key-de-tmdb"
 ```
 
+**Import TMDB y error 400**: Si al importar desde TMDB recibes **400** con mensaje tipo "TMDB rechazó la API key", suele ser porque `TMDB_API_KEY` no llega al proceso de movie-service. Si abres el workspace como **carpeta padre (FILMSCORE)**, en VS Code/Cursor usa la configuración de launch **"3 Movie Service (env en backend)"**, que carga el `.env` desde `Gestor_PeliculasYSeries_Microservicios/.env`. Comprueba en los logs de movie-service al arrancar: debe aparecer "TMDB: api-key configurada (X caracteres). Bearer auth: true". Si sale "tmdb.api-key está vacía", la variable no se está cargando.
+
 ### Orden de arranque
 
 ```bash

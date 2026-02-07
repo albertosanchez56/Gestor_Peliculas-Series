@@ -32,6 +32,14 @@
       "envFile": "${workspaceFolder}/.env"
     },
     {
+      "name": "3 Movie Service (env en backend)",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.movie.service.MovieServiceApplication",
+      "projectName": "movie-service",
+      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
+    },
+    {
       "name": "3 Review Service",
       "type": "java",
       "request": "launch",

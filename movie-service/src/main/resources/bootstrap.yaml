@@ -37,4 +37,6 @@ tmdb:
   profileSize: /w185
   language: es-ES
   cert-country: ES
+  # Token v4 (Bearer): true. API Key v3 (query): false
+  use-bearer-auth: true
 

@@ -44,15 +44,17 @@ public class TmdbClientImpl implements TmdbClient {
 
     private HttpHeaders bearerHeaders() {
         HttpHeaders h = new HttpHeaders();
-        if (props.isUseBearerAuth() && props.getApiKey() != null && !props.getApiKey().isBlank()) {
-            h.setBearerAuth(props.getApiKey());
+        String key = props.getApiKey() != null ? props.getApiKey().trim() : null;
+        if (props.isUseBearerAuth() && key != null && !key.isBlank()) {
+            h.setBearerAuth(key);
         }
         return h;
     }
 
     private <T> T get(String uri, Class<T> responseType) {
         if (props.isUseBearerAuth()) {
-            ResponseEntity<T> re = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(bearerHeaders()), responseType);
+            HttpEntity<Void> entity = new HttpEntity<>(null, bearerHeaders());
+            ResponseEntity<T> re = restTemplate.exchange(uri, HttpMethod.GET, entity, responseType);
             return re.getBody();
         }
         return restTemplate.getForObject(uri, responseType);

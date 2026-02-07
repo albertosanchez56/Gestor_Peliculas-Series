@@ -25,7 +25,7 @@ public class TmdbProps {
 	}
 
 	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
+		this.apiKey = apiKey != null ? apiKey.trim() : null;
 	}
 
 	public boolean isUseBearerAuth() {
