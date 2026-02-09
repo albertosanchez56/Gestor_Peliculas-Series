@@ -191,6 +191,36 @@ public class TmdbImportService {
     return imported;
   }
 
+  /**
+   * Importa una sola página de películas populares de TMDB (para flujo página a página con progreso en UI).
+   * @param page número de página (1-based)
+   */
+  @Transactional
+  public ImportPageResult importPopularPage(int page) {
+    page = Math.max(1, Math.min(page, 500)); // TMDB suele permitir hasta 500
+    List<Movie> imported = new ArrayList<>();
+    int created = 0, updated = 0, skipped = 0;
+    List<String> errors = new ArrayList<>();
+
+    TmdbPopularResponse pr = tmdbClient.getPopular(page);
+    if (pr == null || pr.results() == null) {
+      return new ImportPageResult(imported, 0, 0, 0, errors);
+    }
+
+    for (TmdbPopularResponse.Item item : pr.results()) {
+      boolean existed = movieRepository.existsByTmdbId(item.id());
+      try {
+        Movie saved = importMovie(item.id());
+        if (existed) updated++; else created++;
+        imported.add(saved);
+      } catch (Exception ex) {
+        skipped++;
+        errors.add(item.id() + ": " + ex.getMessage());
+      }
+    }
+    return new ImportPageResult(imported, created, updated, skipped, errors);
+  }
+
   @Transactional
   public ImportSummary importPopularSummary(int pages) {
     pages = Math.max(1, Math.min(pages, 10));

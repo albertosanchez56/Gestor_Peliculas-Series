@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 import com.movie.service.DTO.DirectorDTO;
 import com.movie.service.DTO.GenreDTO;
+import com.movie.service.DTO.ImportPageResponse;
 import com.movie.service.DTO.MovieDTO;
 import com.movie.service.Entidades.Director;
 import com.movie.service.Entidades.Movie;
+import com.movie.service.tmdb.ImportPageResult;
 import com.movie.service.tmdb.ImportSummary;
 import com.movie.service.tmdb.TmdbImportService;
 
@@ -28,6 +30,16 @@ import lombok.RequiredArgsConstructor;
 public class TmdbImportController {
 
   private final TmdbImportService importService;
+
+  // POST /tmdb/import/popular/page?page=N — importa una sola página (para UI con progreso)
+  @PostMapping(value = "/import/popular/page", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<ImportPageResponse> importPopularPage(
+      @RequestParam @Min(1) @Max(500) int page) {
+    ImportPageResult result = importService.importPopularPage(page);
+    List<MovieDTO> dtos = result.movies().stream().map(this::toDto).toList();
+    return ResponseEntity.ok(new ImportPageResponse(
+        page, dtos, result.created(), result.updated(), result.skipped(), result.errors()));
+  }
 
   // POST /tmdb/import/popular?pages=1..10
   @PostMapping(value = "/import/popular", produces = MediaType.APPLICATION_JSON_VALUE)
