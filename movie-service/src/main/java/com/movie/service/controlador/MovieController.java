@@ -91,6 +91,14 @@ public class MovieController {
 	  List<Movie> top = movieService.getTopRated(limit);
 	  return ResponseEntity.ok(top.stream().map(this::toDto).toList());
 	}
+
+	@GetMapping(value = "/top-rated-by-genre", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MovieDTO>> topRatedByGenre(
+			@RequestParam String genreSlug,
+			@RequestParam(defaultValue = "14") int limit) {
+	  List<Movie> top = movieService.getTopRatedByGenre(genreSlug, limit);
+	  return ResponseEntity.ok(top.stream().map(this::toDto).toList());
+	}
 	
 	@PostMapping(value = "/cast/{id}/tmdb/{tmdbId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	  public List<CastCredit> importCast(

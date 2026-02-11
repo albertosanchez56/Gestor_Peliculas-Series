@@ -38,6 +38,15 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 			+ "  where m.averageRating is not null\r\n" + "  order by m.averageRating desc, m.voteCount desc")
 	List<Movie> findTopRated(Pageable pageable);
 
+	@Query("""
+		select distinct m from Movie m
+		left join fetch m.director
+		left join fetch m.genres
+		join m.genres g
+		where lower(g.slug) = lower(:slug) and m.averageRating is not null
+		""")
+	List<Movie> findTopRatedByGenreSlug(@Param("slug") String slug, Pageable pageable);
+
 	Page<Movie> findAll(Pageable pageable);
 
 	// Búsqueda simple por título

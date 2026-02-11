@@ -106,6 +106,15 @@ public class MovieService {
     	  int lim = Math.max(1, Math.min(limit, 50)); // cap opcional
     	  return movieRepository.findTopRated(PageRequest.of(0, lim));
     	}
+
+    /** Top valoradas filtradas por slug de género (ej. "accion"). */
+    public List<Movie> getTopRatedByGenre(String genreSlug, int limit) {
+        if (genreSlug == null || genreSlug.isBlank()) return List.of();
+        int lim = Math.max(1, Math.min(limit, 50));
+        Sort sort = Sort.by(Sort.Direction.DESC, "averageRating")
+            .and(Sort.by(Sort.Direction.DESC, "voteCount"));
+        return movieRepository.findTopRatedByGenreSlug(genreSlug.trim(), PageRequest.of(0, lim, sort));
+    }
     
     public Page<Movie> listPaged(int page, int size, @Nullable String q) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("title").ascending());
