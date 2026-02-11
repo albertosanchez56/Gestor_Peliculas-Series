@@ -1,12 +1,19 @@
 package com.movie.service.servicio;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.movie.service.Entidades.Movie;
+
+import com.movie.service.DTO.GenreCardDTO;
 import com.movie.service.Entidades.Genre;
 import com.movie.service.repositorio.GenreRepository;
 import com.movie.service.repositorio.MovieRepository;
@@ -58,6 +65,36 @@ public class GenreService {
   }
 
   /* ==== Métodos nuevos usados por el controller ==== */
+
+  /** Lista de géneros con conteo y póster (sin repetir imagen entre géneros: se usa la 1ª, 2ª, etc. mejor valorada según disponibilidad). */
+  public List<GenreCardDTO> getGenresWithMovieCount() {
+    Sort sort = Sort.by(Sort.Direction.DESC, "averageRating")
+        .and(Sort.by(Sort.Direction.DESC, "voteCount"));
+    Set<String> usedPosterUrls = new HashSet<>();
+    List<GenreCardDTO> result = new ArrayList<>();
+    int topPerGenre = 15; // suficientes para elegir una imagen no usada
+
+    for (Genre g : genreRepository.findAll()) {
+      long count = movieRepository.countByGenreId(g.getId());
+      String slug = g.getSlug() != null ? g.getSlug() : "";
+      String posterUrl = null;
+      if (count > 0 && slug != null && !slug.isBlank()) {
+        List<Movie> top = movieRepository.findTopRatedByGenreSlug(slug, PageRequest.of(0, topPerGenre, sort));
+        for (Movie m : top) {
+          String url = m.getPosterUrl() != null && !m.getPosterUrl().isBlank()
+              ? m.getPosterUrl()
+              : m.getBackdropUrl();
+          if (url != null && !url.isBlank() && !usedPosterUrls.contains(url)) {
+            posterUrl = url;
+            usedPosterUrls.add(url);
+            break;
+          }
+        }
+      }
+      result.add(new GenreCardDTO(g.getId(), g.getName(), slug, count, posterUrl));
+    }
+    return result;
+  }
 
   /** Lista con paginación simple (manteniendo tu ruta actual). */
   public List<Genre> getAll(int page, int size) {

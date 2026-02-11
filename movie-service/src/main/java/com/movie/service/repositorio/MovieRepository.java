@@ -63,4 +63,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 			     or lower(g.name) like lower(concat('%', :q, '%'))
 			""")
 	Page<Movie> searchAllFields(@Param("q") String q, Pageable pageable);
+
+	@Query("select count(distinct m) from Movie m join m.genres g where g.id = :genreId")
+	long countByGenreId(@Param("genreId") Long genreId);
 }

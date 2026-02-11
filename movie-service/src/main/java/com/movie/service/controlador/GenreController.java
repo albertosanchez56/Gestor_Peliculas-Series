@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.movie.service.DTO.DirectorDTO;
+import com.movie.service.DTO.GenreCardDTO;
 import com.movie.service.DTO.GenreDTO;
 import com.movie.service.DTO.MovieDTO;
 import com.movie.service.Entidades.Director;
@@ -29,6 +30,12 @@ import lombok.RequiredArgsConstructor;
 public class GenreController {
 
 	private final GenreService genreService;
+
+	/** GET /generos/cards — géneros con conteo de películas (para home). */
+	@GetMapping(value = "/cards", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<GenreCardDTO>> cards() {
+		return ResponseEntity.ok(genreService.getGenresWithMovieCount());
+	}
 
 	// GET /peliculas/mostrargeneros
 	@GetMapping(value = "/mostrargeneros", produces = MediaType.APPLICATION_JSON_VALUE)
