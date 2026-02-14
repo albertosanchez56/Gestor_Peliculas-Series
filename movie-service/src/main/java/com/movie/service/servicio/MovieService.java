@@ -1,5 +1,6 @@
 package com.movie.service.servicio;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -107,6 +108,13 @@ public class MovieService {
     	  return movieRepository.findTopRated(PageRequest.of(0, lim));
     	}
 
+    /** Próximos estrenos: releaseDate >= hoy, ordenadas por fecha ascendente. */
+    public List<Movie> getUpcoming(int limit) {
+        int lim = Math.max(1, Math.min(limit, 50));
+        return movieRepository.findByReleaseDateGreaterThanEqualOrderByReleaseDateAsc(
+            LocalDate.now(), PageRequest.of(0, lim)).getContent();
+    }
+
     /** Top valoradas filtradas por slug de género (ej. "accion"). */
     public List<Movie> getTopRatedByGenre(String genreSlug, int limit) {
         if (genreSlug == null || genreSlug.isBlank()) return List.of();
@@ -116,14 +124,15 @@ public class MovieService {
         return movieRepository.findTopRatedByGenreSlug(genreSlug.trim(), PageRequest.of(0, lim, sort));
     }
     
-    public Page<Movie> listPaged(int page, int size, @Nullable String q) {
+    public Page<Movie> listPaged(int page, int size, @Nullable String q, @Nullable String genreSlug) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("title").ascending());
+        if (genreSlug != null && !genreSlug.isBlank()) {
+            return movieRepository.findByGenreSlug(genreSlug.trim(), pageable);
+        }
         if (q == null || q.isBlank()) {
             return movieRepository.findAll(pageable);
         }
         return movieRepository.searchAllFields(q.trim(), pageable);
-        // O si prefieres simple por título:
-        // return movieRepository.findByTitleContainingIgnoreCase(q.trim(), pageable);
     }
 
     /** Sugerencias (autocomplete) limitado por size. */

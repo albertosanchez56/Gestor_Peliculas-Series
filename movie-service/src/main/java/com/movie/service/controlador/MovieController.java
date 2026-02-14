@@ -99,7 +99,13 @@ public class MovieController {
 	  List<Movie> top = movieService.getTopRatedByGenre(genreSlug, limit);
 	  return ResponseEntity.ok(top.stream().map(this::toDto).toList());
 	}
-	
+
+	@GetMapping(value = "/upcoming", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MovieDTO>> upcoming(@RequestParam(defaultValue = "19") int limit) {
+	  List<Movie> list = movieService.getUpcoming(limit);
+	  return ResponseEntity.ok(list.stream().map(this::toDto).toList());
+	}
+
 	@PostMapping(value = "/cast/{id}/tmdb/{tmdbId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	  public List<CastCredit> importCast(
 	      @PathVariable Long id,
@@ -127,14 +133,15 @@ public class MovieController {
 	  return ResponseEntity.ok(dto);
 	}
 
-	// --- LISTADO PAGINADO + q: /peliculas/peliculas?page=0&size=25&q=texto ---
+	// --- LISTADO PAGINADO: ?page=0&size=25&q=texto&genre=accion ---
 	@GetMapping(value = "/peliculas", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovieDTO>> listPaged(
 	    @RequestParam(defaultValue = "0") int page,
 	    @RequestParam(defaultValue = "25") int size,
-	    @RequestParam(required = false) @Nullable String q
+	    @RequestParam(required = false) @Nullable String q,
+	    @RequestParam(required = false) @Nullable String genre
 	) {
-	  Page<Movie> p = movieService.listPaged(page, size, q);
+	  Page<Movie> p = movieService.listPaged(page, size, q, genre);
 	  var dto = p.getContent().stream().map(this::toDto).toList();
 	  return ResponseEntity.ok(dto);
 	}

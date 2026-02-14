@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 import com.movie.service.Entidades.Movie;
 
 @Repository
@@ -66,4 +68,10 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
 	@Query("select count(distinct m) from Movie m join m.genres g where g.id = :genreId")
 	long countByGenreId(@Param("genreId") Long genreId);
+
+	@Query("select m from Movie m join m.genres g where lower(g.slug) = lower(:slug)")
+	Page<Movie> findByGenreSlug(@Param("slug") String slug, Pageable pageable);
+
+	/** Próximos estrenos: releaseDate >= hoy, ordenadas por fecha ascendente */
+	Page<Movie> findByReleaseDateGreaterThanEqualOrderByReleaseDateAsc(LocalDate fromDate, Pageable pageable);
 }
