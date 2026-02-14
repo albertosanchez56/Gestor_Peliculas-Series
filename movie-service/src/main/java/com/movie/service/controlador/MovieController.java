@@ -19,10 +19,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import org.springframework.data.domain.PageRequest;
+
 import com.movie.service.DTO.CastCreditDTO;
 import com.movie.service.DTO.DirectorDTO;
 import com.movie.service.DTO.GenreDTO;
 import com.movie.service.DTO.MovieDTO;
+import com.movie.service.DTO.PopularActorDTO;
 import com.movie.service.DTO.MovieRequest;
 import com.movie.service.DTO.MovieSuggestionDTO;
 import com.movie.service.Entidades.CastCredit;
@@ -104,6 +107,22 @@ public class MovieController {
 	public ResponseEntity<List<MovieDTO>> upcoming(@RequestParam(defaultValue = "19") int limit) {
 	  List<Movie> list = movieService.getUpcoming(limit);
 	  return ResponseEntity.ok(list.stream().map(this::toDto).toList());
+	}
+
+	@GetMapping(value = "/actors/popular", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PopularActorDTO>> popularActors(@RequestParam(defaultValue = "19") int limit) {
+	  int lim = Math.max(1, Math.min(limit, 50));
+	  List<Object[]> rows = castCreditRepository.findPopularActors(PageRequest.of(0, lim));
+	  List<PopularActorDTO> dto = rows.stream()
+	      .map(row -> new PopularActorDTO(
+	          ((Number) row[0]).longValue(),
+	          (String) row[1],
+	          row[2] != null ? (String) row[2] : null,
+	          ((Number) row[3]).longValue(),
+	          row[4] != null ? (String) row[4] : null,
+	          row[5] != null ? (String) row[5] : null))
+	      .toList();
+	  return ResponseEntity.ok(dto);
 	}
 
 	@PostMapping(value = "/cast/{id}/tmdb/{tmdbId}", produces = MediaType.APPLICATION_JSON_VALUE)
