@@ -1,5 +1,6 @@
 package com.gateway.service3.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +14,25 @@ import com.gateway.service3.client.MovieServiceClient;
 import com.gateway.service3.modelos.Director;
 import com.gateway.service3.modelos.Genre;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
 import reactor.core.publisher.Mono;
 
 
 @Controller
 public class GatewayController {
-	
+
 	@Autowired
     private WebClient.Builder webClientBuilder;
 
+	@Autowired
+	@Qualifier("peliculasCircuitBreaker")
+	private CircuitBreaker peliculasCircuitBreaker;
+
     private final String peliculasServiceUrl = "http://localhost:9090/peliculas";
-	
+
 	 @GetMapping("/Home")
 	    public String showIndex(Model model) {
 	        model.addAttribute("title", "Bienvenido a mi portfolio");
@@ -38,29 +47,30 @@ public class GatewayController {
 	 
 	 @GetMapping("/AgregarPelicula")
 	 public Mono<String> savePelicula(Model model) {
-	     // Obtener directores
 	     Mono<List<Director>> directoresMono = webClientBuilder.build()
 	         .get()
-	         .uri(peliculasServiceUrl + "/mostrardirectores") // Endpoint para obtener directores
+	         .uri(peliculasServiceUrl + "/mostrardirectores")
 	         .retrieve()
 	         .bodyToFlux(Director.class)
-	         .collectList();
+	         .collectList()
+	         .transformDeferred(CircuitBreakerOperator.of(peliculasCircuitBreaker))
+	         .onErrorResume(e -> Mono.just(Collections.emptyList()));
 
-	     // Obtener géneros
 	     Mono<List<Genre>> generosMono = webClientBuilder.build()
 	         .get()
-	         .uri(peliculasServiceUrl + "/mostrargeneros") // Endpoint para obtener géneros
+	         .uri(peliculasServiceUrl + "/mostrargeneros")
 	         .retrieve()
 	         .bodyToFlux(Genre.class)
-	         .collectList();
+	         .collectList()
+	         .transformDeferred(CircuitBreakerOperator.of(peliculasCircuitBreaker))
+	         .onErrorResume(e -> Mono.just(Collections.emptyList()));
 
-	     // Combinar ambas solicitudes
 	     return Mono.zip(directoresMono, generosMono)
 	         .map(tuple -> {
 	             model.addAttribute("title", "Bienvenido a mi portfolio");
 	             model.addAttribute("directores", tuple.getT1());
-	             model.addAttribute("generos", tuple.getT2()); // Agregar los géneros al modelo
-	             return "guardarpeliculas"; // Nombre de la vista
+	             model.addAttribute("generos", tuple.getT2());
+	             return "guardarpeliculas";
 	         });
 	 }
 

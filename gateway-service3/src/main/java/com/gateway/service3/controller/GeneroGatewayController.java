@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import com.gateway.service3.modelos.Genre;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -22,12 +26,16 @@ public class GeneroGatewayController {
 	@Autowired
     private WebClient.Builder webClientBuilder;
 
+	@Autowired
+	@Qualifier("peliculasCircuitBreaker")
+	private CircuitBreaker peliculasCircuitBreaker;
+
     private final String peliculasServiceUrl = "http://localhost:9090/peliculas/generos";
-    
+
     public GeneroGatewayController(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
-    
+
     @PostMapping("/guardar-genero")
     public Mono<Void> guardarGenero(@ModelAttribute Genre genero, ServerWebExchange exchange) {
         return webClientBuilder.build()
@@ -36,10 +44,15 @@ public class GeneroGatewayController {
             .bodyValue(genero)
             .retrieve()
             .bodyToMono(String.class)
+            .transformDeferred(CircuitBreakerOperator.of(peliculasCircuitBreaker))
             .then(Mono.defer(() -> {
                 exchange.getResponse().setStatusCode(HttpStatus.FOUND);
                 exchange.getResponse().getHeaders().setLocation(URI.create("/AgregarGeneros"));
                 return exchange.getResponse().setComplete();
-            }));
+            }))
+            .onErrorResume(e -> {
+                exchange.getResponse().setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
+                return exchange.getResponse().setComplete();
+            });
     }
 }

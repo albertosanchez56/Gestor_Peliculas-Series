@@ -26,14 +26,31 @@ security:
     expiration-minutes: ${JWT_EXP_MINUTES:120}
 
 
-# Para Feign + resilience:
+# Circuit breaker entre microservicios (user-service, movie-service)
 resilience4j:
   circuitbreaker:
     instances:
       userService:
+        registerHealthIndicator: true
         slidingWindowSize: 10
+        minimumNumberOfCalls: 5
         failureRateThreshold: 50
+        waitDurationInOpenState: 15s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
       movieService:
+        registerHealthIndicator: true
         slidingWindowSize: 10
+        minimumNumberOfCalls: 5
         failureRateThreshold: 50
-        
+        waitDurationInOpenState: 15s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+      movieInternalClient:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 15s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true

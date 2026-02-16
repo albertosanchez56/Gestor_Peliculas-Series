@@ -1,0 +1,12 @@
+# Circuit breaker para llamadas desde el gateway a movie-service (películas/directores/géneros)
+resilience4j:
+  circuitbreaker:
+    instances:
+      peliculas:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 15s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
