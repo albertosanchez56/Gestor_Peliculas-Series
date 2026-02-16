@@ -1,3 +1,16 @@
 # Fallback local: arranque sin Config Server o si no devuelve esta propiedad
 internal:
   api-key: ${INTERNAL_API_KEY:dev-internal-key}
+
+# Circuit breaker para llamadas a la API de TMDB
+resilience4j:
+  circuitbreaker:
+    instances:
+      tmdb:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 15s
+        failureRateThreshold: 50

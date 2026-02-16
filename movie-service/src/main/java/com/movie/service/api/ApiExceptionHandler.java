@@ -11,6 +11,8 @@ import org.springframework.validation.FieldError;
 
 import jakarta.validation.ConstraintViolationException;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -86,5 +88,16 @@ public class ApiExceptionHandler {
             "status", 400,
             "message", hint
         ));
+  }
+
+  /** Circuit breaker abierto: TMDB no está disponible temporalmente. */
+  @ExceptionHandler(CallNotPermittedException.class)
+  @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+  public Map<String, Object> handleCircuitBreakerOpen(CallNotPermittedException ex) {
+    return Map.of(
+      "timestamp", OffsetDateTime.now(),
+      "status", 503,
+      "message", "Servicio de TMDB no disponible temporalmente. Inténtelo de nuevo en unos segundos."
+    );
   }
 }
