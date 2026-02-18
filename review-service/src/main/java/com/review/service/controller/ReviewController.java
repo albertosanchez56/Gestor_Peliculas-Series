@@ -61,12 +61,14 @@ public class ReviewController {
         return service.updateMy(userId, reviewId, req);
     }
 
-    // Privado: borrar mi review
+    // Privado: borrar mi review (o cualquier review si es ADMIN)
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> delete(@PathVariable Long reviewId,
                                        Authentication auth) {
         Long userId = Long.valueOf(auth.getName());
-        service.deleteMy(userId, reviewId);
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        service.delete(userId, reviewId, isAdmin);
         return ResponseEntity.noContent().build();
     }
 

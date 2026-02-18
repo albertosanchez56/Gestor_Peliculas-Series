@@ -21,7 +21,7 @@
       "request": "launch",
       "mainClass": "com.user.service.UserServiceApplication",
       "projectName": "user-service",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
     },
     {
       "name": "3 Movie Service",
@@ -29,7 +29,7 @@
       "request": "launch",
       "mainClass": "com.movie.service.MovieServiceApplication",
       "projectName": "movie-service",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
     },
     {
       "name": "3 Movie Service (env en backend)",
@@ -45,21 +45,23 @@
       "request": "launch",
       "mainClass": "com.review.service.ReviewServiceApplication",
       "projectName": "review-service",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
     },
     {
       "name": "4 Gateway",
       "type": "java",
       "request": "launch",
       "mainClass": "com.gateway.service3.GatewayService3Application",
-      "projectName": "gateway-service3"
+      "projectName": "gateway-service3",
+      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
     },
     {
       "name": "Favoritelist Service",
       "type": "java",
       "request": "launch",
       "mainClass": "com.favoritelist.service.FavoritelistServiceApplication",
-      "projectName": "favoritelist-service"
+      "projectName": "favoritelist-service",
+      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
     }
   ]
 }

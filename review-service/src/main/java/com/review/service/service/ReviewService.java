@@ -115,16 +115,20 @@ public class ReviewService {
     }
 
     public void deleteMy(Long userId, Long reviewId) {
+        delete(userId, reviewId, false);
+    }
+
+    /** Borra una review: solo el dueño puede, o un admin puede borrar cualquiera. */
+    public void delete(Long userId, Long reviewId, boolean isAdmin) {
         Review r = repo.findById(reviewId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Review no encontrada."));
 
-        if (!r.getUserId().equals(userId)) {
+        if (!isAdmin && !r.getUserId().equals(userId)) {
             throw new ApiException(HttpStatus.FORBIDDEN, "No puedes borrar una review que no es tuya.");
         }
 
         Long movieId = r.getMovieId();
         repo.delete(r);
-
         syncMovieAggregates(movieId);
     }
 
