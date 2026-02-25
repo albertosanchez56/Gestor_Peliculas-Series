@@ -102,6 +102,10 @@ Punto de entrada único. Enruta todas las peticiones hacia los microservicios co
 - **Estadísticas**: media y contador por película
 - **Comunicación**: Feign con User Service (displayName) y Movie Service (agregados)
 
+### Favoritelist Service (en desarrollo — no incluido en el flujo actual)
+
+El módulo **favoritelist-service** existe en el repositorio como proyecto Spring Boot base pero **no está integrado en el Gateway ni expuesto en la API**. La funcionalidad de “lista de películas favoritas por usuario” queda prevista para una fase posterior. Para usar la aplicación (frontend + backend) no es necesario arrancar ni configurar este servicio.
+
 ---
 
 ## Seguridad
@@ -319,7 +323,7 @@ Gestor_PeliculasYSeries_Microservicios/
 ├── user-service/             # Usuarios y auth
 ├── movie-service/            # Películas, directores, géneros, cast
 ├── review-service/           # Reseñas
-└── favoritelist-service/     # (en desarrollo)
+└── favoritelist-service/     # En desarrollo; no incluido en el flujo actual
 ```
 
 ---
@@ -337,7 +341,7 @@ Incluye tests unitarios para `AuthService`, `AuthController` y flujo JWT.
 
 ## Próximos pasos
 
-- Completar **favoritelist-service**: lista de películas favoritas por usuario
+- Completar **favoritelist-service** (lista de películas favoritas por usuario) e integrarlo en el Gateway cuando se implemente.
 - Implementar **refresh token** para renovar JWT sin re-login
 - Añadir **rate limiting** en el Gateway para proteger endpoints sensibles
 - Definir **versionado de API** (ej. `/api/v1/...`)
