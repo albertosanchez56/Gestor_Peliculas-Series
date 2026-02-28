@@ -273,6 +273,26 @@ cd gateway-service3 && mvn spring-boot:run
 
 **Punto de entrada**: `http://localhost:9090`
 
+### Alternativa: Docker Compose
+
+Puedes levantar todo el backend (MySQL + Config + Eureka + user, movie, review + Gateway) con un solo comando:
+
+**Requisitos:** Docker y Docker Compose instalados.
+
+```bash
+# Desde la raíz del backend (Gestor_PeliculasYSeries_Microservicios)
+cp .env.docker.example .env
+# Edita .env y rellena al menos MYSQL_ROOT_PASSWORD y JWT_SECRET
+
+docker-compose up -d --build
+```
+
+- **MySQL** crea automáticamente las tres bases de datos al iniciar (script en `docker/init-dbs.sql`).
+- **Config Server** arranca con perfil `native` y lee la carpeta `config-data` local.
+- Los servicios se conectan entre sí por nombre (`config-service`, `eureka-service`, `mysql`). El API Gateway queda en `http://localhost:9090`.
+
+Para parar todo: `docker-compose down`. Los datos de MySQL se conservan en un volumen.
+
 ---
 
 ## API principal (via Gateway)
@@ -323,7 +343,10 @@ Gestor_PeliculasYSeries_Microservicios/
 ├── user-service/             # Usuarios y auth
 ├── movie-service/            # Películas, directores, géneros, cast
 ├── review-service/           # Reseñas
-└── favoritelist-service/     # En desarrollo; no incluido en el flujo actual
+├── favoritelist-service/     # En desarrollo; no incluido en el flujo actual
+├── docker/                   # init-dbs.sql para MySQL en Docker
+├── docker-compose.yml        # Levantar todo con Docker Compose
+└── .env.docker.example       # Variables para Docker; copiar a .env
 ```
 
 ---
@@ -345,7 +368,7 @@ Incluye tests unitarios para `AuthService`, `AuthController` y flujo JWT.
 - Implementar **refresh token** para renovar JWT sin re-login
 - Añadir **rate limiting** en el Gateway para proteger endpoints sensibles
 - Definir **versionado de API** (ej. `/api/v1/...`)
-- Configurar **Docker Compose** para levantar todos los servicios con un comando
+- ~~Configurar **Docker Compose** para levantar todos los servicios con un comando~~ ✅ Hecho (ver sección «Alternativa: Docker Compose»)
 - Sustituir Config Server Git por perfil **native** con `config-data` local para despliegue autónomo
 
 ---

@@ -1,0 +1,119 @@
+# FilmScore Backend — levantar todos los microservicios con un solo comando.
+# Uso: desde esta carpeta: docker-compose up -d
+# Requisitos: Docker y Docker Compose. Crear .env desde .env.docker.example (JWT_SECRET, INTERNAL_API_KEY, etc.).
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: filmscore-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/init-dbs.sql:/docker-entrypoint-initdb.d/init-dbs.sql
+    healthcheck:
+      test: ["CMD", "sh", "-c", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  config-service:
+    build:
+      context: ./config-service3
+      dockerfile: Dockerfile
+    container_name: filmscore-config
+    environment:
+      SPRING_PROFILES_ACTIVE: native
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCHLOCATIONS: file:/config-data
+    volumes:
+      - ./config-data:/config-data:ro
+    ports:
+      - "8081:8081"
+
+  eureka-service:
+    build:
+      context: ./eureka-service3
+      dockerfile: Dockerfile
+    container_name: filmscore-eureka
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
+    ports:
+      - "8761:8761"
+    restart: on-failure
+    depends_on:
+      - config-service
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: filmscore-user-service
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pruebagestorusuarios
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-min-32-chars}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
+    restart: on-failure
+    depends_on:
+      - mysql
+      - eureka-service
+
+  movie-service:
+    build:
+      context: ./movie-service
+      dockerfile: Dockerfile
+    container_name: filmscore-movie-service
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pruebagestorpeliculas
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
+      TMDB_API_KEY: ${TMDB_API_KEY:-}
+    restart: on-failure
+    depends_on:
+      - mysql
+      - eureka-service
+
+  review-service:
+    build:
+      context: ./review-service
+      dockerfile: Dockerfile
+    container_name: filmscore-review-service
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pruebagestorreviews
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-min-32-chars}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
+    restart: on-failure
+    depends_on:
+      - mysql
+      - eureka-service
+
+  gateway-service:
+    build:
+      context: ./gateway-service3
+      dockerfile: Dockerfile
+    container_name: filmscore-gateway
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
+    ports:
+      - "9090:9090"
+    restart: on-failure
+    depends_on:
+      - eureka-service
+
+volumes:
+  mysql_data:
