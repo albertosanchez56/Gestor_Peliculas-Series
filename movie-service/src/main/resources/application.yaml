@@ -1,4 +1,18 @@
 # Fallback local: arranque sin Config Server o si no devuelve esta propiedad
+spring:
+  application:
+    name: movie-service
+
+eureka:
+  client:
+    service-url:
+      # En Docker: EUREKA_URL=http://eureka-service:8761/eureka
+      # En local: usa el fallback a localhost
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+  instance:
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:${spring.application.name}}
+    prefer-ip-address: false
+
 internal:
   api-key: ${INTERNAL_API_KEY:dev-internal-key}
 

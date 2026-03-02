@@ -10,22 +10,21 @@ spring:
       uri: http://localhost:8081
 
   datasource:
-    url: jdbc:mysql://localhost:3306/pruebagestorpeliculas  # Cambia a la URL de tu base de datos
-    username: root                               # Cambia por el usuario de tu base de datos
-    password:                             # Cambia por la contraseña de tu base de datos
+    url: jdbc:mysql://localhost:3306/pruebagestorpeliculas
+    username: root
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update  # Cambia a 'validate', 'none', o 'create' según tus necesidades
-    show-sql: true      # Opción para mostrar las consultas SQL en la consola
+      ddl-auto: update
+    show-sql: true
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,mappings
-
 
 tmdb:
   api-key: ${TMDB_API_KEY:}
@@ -37,6 +36,6 @@ tmdb:
   profileSize: /w185
   language: es-ES
   cert-country: ES
-  # Token v4 (Bearer): true. API Key v3 (query): false
-  use-bearer-auth: true
+  # Si tu clave es de tipo "Bearer ..." deja esto en true
+  use-bearer-auth: ${TMDB_USE_BEARER_AUTH:false}
 

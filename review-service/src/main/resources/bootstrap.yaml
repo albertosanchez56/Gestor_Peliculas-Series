@@ -19,12 +19,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    
+
 security:
   jwt:
-    secret: ${JWT_SECRET:vW9mF7kQ3zH1pA6nR2sX8cJ5yT4uE0iL9oB3gN7dP1rK6mQ2xS8aV5hZ0tY9uC}
+    secret: ${JWT_SECRET:change-me-in-production-min-32-chars}
     expiration-minutes: ${JWT_EXP_MINUTES:120}
-
 
 # Circuit breaker entre microservicios (user-service, movie-service)
 resilience4j:
@@ -54,3 +53,4 @@ resilience4j:
         waitDurationInOpenState: 15s
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
+

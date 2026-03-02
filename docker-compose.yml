@@ -39,7 +39,8 @@ services:
       dockerfile: Dockerfile
     container_name: filmscore-eureka
     environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      SERVER_PORT: "8761"
     ports:
       - "8761:8761"
     restart: on-failure
@@ -56,9 +57,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pruebagestorusuarios
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
       EUREKA_INSTANCE_HOSTNAME: user-service
+      EUREKA_URL: http://eureka-service:8761/eureka
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production-min-32-chars}
+      SECURITY_JWT_SECRET: ${JWT_SECRET:-change-me-in-production-min-32-chars}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
     restart: on-failure
     depends_on:
@@ -75,8 +77,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pruebagestorpeliculas
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
       EUREKA_INSTANCE_HOSTNAME: movie-service
+      EUREKA_URL: http://eureka-service:8761/eureka
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
       TMDB_API_KEY: ${TMDB_API_KEY:-}
     restart: on-failure
@@ -94,9 +96,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pruebagestorreviews
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
       EUREKA_INSTANCE_HOSTNAME: review-service
+      EUREKA_URL: http://eureka-service:8761/eureka
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production-min-32-chars}
+      SECURITY_JWT_SECRET: ${JWT_SECRET:-change-me-in-production-min-32-chars}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
     restart: on-failure
     depends_on:
@@ -109,8 +112,8 @@ services:
       dockerfile: Dockerfile
     container_name: filmscore-gateway
     environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      EUREKA_URL: http://eureka-service:8761/eureka
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
     ports:
       - "9090:9090"
