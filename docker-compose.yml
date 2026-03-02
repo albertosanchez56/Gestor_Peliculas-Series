@@ -52,7 +52,7 @@ services:
       dockerfile: Dockerfile
     container_name: filmscore-user-service
     environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pruebagestorusuarios
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
@@ -71,7 +71,7 @@ services:
       dockerfile: Dockerfile
     container_name: filmscore-movie-service
     environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pruebagestorpeliculas
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
@@ -90,7 +90,7 @@ services:
       dockerfile: Dockerfile
     container_name: filmscore-review-service
     environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-service:8081
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pruebagestorreviews
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
