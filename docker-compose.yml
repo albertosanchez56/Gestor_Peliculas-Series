@@ -9,7 +9,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
     ports:
-      - "3306:3306"
+      - "3307:3306"   # Host:Contenedor. Si tienes MySQL local en 3306, usamos 3307 fuera.
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/init-dbs.sql:/docker-entrypoint-initdb.d/init-dbs.sql
@@ -57,6 +57,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: user-service
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production-min-32-chars}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
     restart: on-failure
@@ -75,6 +76,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: movie-service
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
       TMDB_API_KEY: ${TMDB_API_KEY:-}
     restart: on-failure
@@ -93,6 +95,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: review-service
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production-min-32-chars}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-dev-internal-key}
     restart: on-failure

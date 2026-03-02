@@ -293,6 +293,8 @@ docker-compose up -d --build
 
 Para parar todo: `docker-compose down`. Los datos de MySQL se conservan en un volumen.
 
+**Nota:** La carpeta `config-data` está preparada para Docker (los servicios usan el hostname `eureka-service`). Si en el futuro ejecutas los microservicios con Maven sin Docker, define la variable de entorno `EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://localhost:8761/eureka` al arrancar user-service, movie-service, review-service y gateway.
+
 ---
 
 ## API principal (via Gateway)
