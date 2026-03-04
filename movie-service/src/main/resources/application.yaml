@@ -16,6 +16,20 @@ eureka:
 internal:
   api-key: ${INTERNAL_API_KEY:dev-internal-key}
 
+# TMDB (necesario para importar y enriquecer datos)
+tmdb:
+  # v3 (32 chars): usa api_key en query
+  # v4 (token largo): usa Authorization: Bearer
+  api-key: ${TMDB_API_KEY:}
+  use-bearer-auth: ${TMDB_USE_BEARER_AUTH:true}
+  base-url: ${TMDB_BASE_URL:https://api.themoviedb.org/3}
+  images-base: ${TMDB_IMAGES_BASE:https://image.tmdb.org/t/p}
+  poster-size: ${TMDB_POSTER_SIZE:/w500}
+  backdrop-size: ${TMDB_BACKDROP_SIZE:/w780}
+  profile-size: ${TMDB_PROFILE_SIZE:/w300}
+  language: ${TMDB_LANGUAGE:es-ES}
+  cert-country: ${TMDB_CERT_COUNTRY:ES}
+
 # Circuit breaker para llamadas a la API de TMDB
 resilience4j:
   circuitbreaker:

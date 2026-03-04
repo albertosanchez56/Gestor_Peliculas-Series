@@ -23,34 +23,34 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/usuario/**
+            - Path=/usuario,/usuario/**
 
         - id: movie-service
           uri: lb://MOVIE-SERVICE
           predicates:
-            - Path=/peliculas/**
+            - Path=/peliculas,/peliculas/**
 
         - id: genres-to-movie
           uri: lb://MOVIE-SERVICE
           predicates:
-            - Path=/generos/**
+            - Path=/generos,/generos/**
 
         - id: directors-to-movie
           uri: lb://MOVIE-SERVICE
           predicates:
-            - Path=/directores/**
+            - Path=/directores,/directores/**
 
         - id: movie-service-tmdb
           uri: lb://MOVIE-SERVICE
           predicates:
-            - Path=/tmdb/**
+            - Path=/tmdb,/tmdb/**
           filters:
             - AddRequestHeader=X-Internal-Token, ${INTERNAL_API_KEY:dev-internal-key}
 
         - id: review-service
           uri: lb://REVIEW-SERVICE
           predicates:
-            - Path=/reviews/**
+            - Path=/reviews,/reviews/**
 
 eureka:
   client:

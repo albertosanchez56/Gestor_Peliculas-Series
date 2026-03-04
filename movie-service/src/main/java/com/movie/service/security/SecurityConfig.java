@@ -46,11 +46,17 @@ public class SecurityConfig {
             	    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
             	    // internos (permitAll pero protegidos por filtro)
+            	    .requestMatchers("/peliculas/internal", "/peliculas/internal/").permitAll()
             	    .requestMatchers("/peliculas/internal/**").permitAll()
 
             	    // públicos
+            	    .requestMatchers("/peliculas", "/peliculas/").permitAll()
             	    .requestMatchers("/peliculas/**").permitAll()
+
+            	    .requestMatchers("/directores", "/directores/").permitAll()
             	    .requestMatchers("/directores/**").permitAll()
+
+            	    .requestMatchers("/generos", "/generos/").permitAll()
             	    .requestMatchers("/generos/**").permitAll()
 
             	    .anyRequest().denyAll()
