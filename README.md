@@ -273,25 +273,49 @@ cd gateway-service3 && mvn spring-boot:run
 
 **Punto de entrada**: `http://localhost:9090`
 
-### Alternativa: Docker Compose
+### Alternativa: Docker Compose (recomendado para pruebas y porfolio)
 
-Puedes levantar todo el backend (MySQL + Config + Eureka + user, movie, review + Gateway) con un solo comando:
+Puedes levantar todo el backend (MySQL + Config + Eureka + user, movie, review + Gateway) con un solo comando.
 
 **Requisitos:** Docker y Docker Compose instalados.
 
 ```bash
 # Desde la raíz del backend (Gestor_PeliculasYSeries_Microservicios)
 cp .env.docker.example .env
-# Edita .env y rellena al menos MYSQL_ROOT_PASSWORD y JWT_SECRET
+# Edita .env y rellena al menos:
+# - MYSQL_ROOT_PASSWORD
+# - JWT_SECRET
+# - INTERNAL_API_KEY
+# - TMDB_API_KEY (opcional pero recomendado para importaciones desde TMDB)
 
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
-- **MySQL** crea automáticamente las tres bases de datos al iniciar (script en `docker/init-dbs.sql`).
+- **MySQL**:
+  - Crea automáticamente las tres bases de datos al iniciar (`docker/init-dbs.sql`).
+  - Ejecuta los scripts SQL de la carpeta `docker/` (incluido `sample-data-peliculas.sql`), que:
+    - Crean las tablas del dominio de películas.
+    - Insertan un conjunto de datos de ejemplo (películas, géneros, directores, cast, etc.) para que el proyecto se vea completo nada más arrancar.
+  - Los datos se guardan en un volumen Docker (`mysql_data`), por lo que persisten entre reinicios.
 - **Config Server** arranca con perfil `native` y lee la carpeta `config-data` local.
-- Los servicios se conectan entre sí por nombre (`config-service`, `eureka-service`, `mysql`). El API Gateway queda en `http://localhost:9090`.
+- **Eureka** y el resto de microservicios (user, movie, review, gateway) se conectan entre sí por nombre (`config-service`, `eureka-service`, `mysql`).
+- El **API Gateway** queda expuesto en `http://localhost:9090`, que es la URL que debe usar el frontend.
 
-Para parar todo: `docker-compose down`. Los datos de MySQL se conservan en un volumen.
+Para parar todo: 
+
+```bash
+docker compose down
+```
+
+Si quieres **reinicializar completamente los datos de MySQL** (por ejemplo, para volver a cargar el SQL de ejemplo desde cero):
+
+```bash
+docker compose down
+docker volume rm gestor_peliculasyseries_microservicios_mysql_data
+docker compose up -d mysql
+```
+
+Después de eso, MySQL volverá a ejecutar los scripts de `docker/` y recreará las bases de datos y los datos de demo.
 
 **Nota:** La carpeta `config-data` está preparada para Docker (los servicios usan el hostname `eureka-service`). Si en el futuro ejecutas los microservicios con Maven sin Docker, define la variable de entorno `EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://localhost:8761/eureka` al arrancar user-service, movie-service, review-service y gateway.
 
@@ -346,7 +370,7 @@ Gestor_PeliculasYSeries_Microservicios/
 ├── movie-service/            # Películas, directores, géneros, cast
 ├── review-service/           # Reseñas
 ├── favoritelist-service/     # En desarrollo; no incluido en el flujo actual
-├── docker/                   # init-dbs.sql para MySQL en Docker
+├── docker/                   # Scripts SQL (init-dbs.sql + sample-data-peliculas.sql) para MySQL en Docker
 ├── docker-compose.yml        # Levantar todo con Docker Compose
 └── .env.docker.example       # Variables para Docker; copiar a .env
 ```
