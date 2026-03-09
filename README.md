@@ -238,7 +238,14 @@ CREATE DATABASE pruebagestorreviews;
 CREATE DATABASE pruebagestorpeliculas;
 ```
 
-### Variables de entorno recomendadas
+### Variables de entorno y `.env`
+
+El fichero `.env` **no se sube al repositorio** (está en `.gitignore`). Así se evita exponer claves (JWT, TMDB, etc.).
+
+- **Con Docker:** Copia `cp .env.docker.example .env`, edita `.env` y rellena al menos `MYSQL_ROOT_PASSWORD`, `JWT_SECRET`, `INTERNAL_API_KEY` y opcionalmente `TMDB_API_KEY`. Docker Compose inyecta esas variables en los contenedores.
+- **Sin Docker (Maven):** Puedes usar el mismo `.env` en la raíz del backend y cargarlo desde el IDE (por ejemplo con `envFile` en `launch.json`) o exportar las variables en la terminal antes de `mvn spring-boot:run`.
+
+Variables típicas:
 
 ```bash
 # JWT (obligatorio en producción)

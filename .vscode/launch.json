@@ -13,7 +13,10 @@
       "type": "java",
       "request": "launch",
       "mainClass": "com.eureka.service3.EurekaService3Application",
-      "projectName": "eureka-service3"
+      "projectName": "eureka-service3",
+      "env": {
+        "SPRING_CLOUD_CONFIG_ENABLED": "false"
+      }
     },
     {
       "name": "3 User Service",
@@ -21,7 +24,13 @@
       "request": "launch",
       "mainClass": "com.user.service.UserServiceApplication",
       "projectName": "user-service",
-      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "SPRING_CLOUD_CONFIG_ENABLED": "false",
+        "EUREKA_URL": "http://localhost:8761/eureka",
+        "EUREKA_INSTANCE_HOSTNAME": "localhost",
+        "SPRING_PROFILES_ACTIVE": "dev"
+      }
     },
     {
       "name": "3 Movie Service",
@@ -29,7 +38,12 @@
       "request": "launch",
       "mainClass": "com.movie.service.MovieServiceApplication",
       "projectName": "movie-service",
-      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "SPRING_CLOUD_CONFIG_ENABLED": "false",
+        "EUREKA_URL": "http://localhost:8761/eureka",
+        "EUREKA_INSTANCE_HOSTNAME": "localhost"
+      }
     },
     {
       "name": "3 Movie Service (env en backend)",
@@ -37,7 +51,12 @@
       "request": "launch",
       "mainClass": "com.movie.service.MovieServiceApplication",
       "projectName": "movie-service",
-      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "SPRING_CLOUD_CONFIG_ENABLED": "false",
+        "EUREKA_URL": "http://localhost:8761/eureka",
+        "EUREKA_INSTANCE_HOSTNAME": "localhost"
+      }
     },
     {
       "name": "3 Review Service",
@@ -45,7 +64,12 @@
       "request": "launch",
       "mainClass": "com.review.service.ReviewServiceApplication",
       "projectName": "review-service",
-      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "SPRING_CLOUD_CONFIG_ENABLED": "false",
+        "EUREKA_URL": "http://localhost:8761/eureka",
+        "EUREKA_INSTANCE_HOSTNAME": "localhost"
+      }
     },
     {
       "name": "4 Gateway",
@@ -53,7 +77,11 @@
       "request": "launch",
       "mainClass": "com.gateway.service3.GatewayService3Application",
       "projectName": "gateway-service3",
-      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "SPRING_CLOUD_CONFIG_ENABLED": "false",
+        "EUREKA_URL": "http://localhost:8761/eureka"
+      }
     },
     {
       "name": "Favoritelist Service",
@@ -61,7 +89,7 @@
       "request": "launch",
       "mainClass": "com.favoritelist.service.FavoritelistServiceApplication",
       "projectName": "favoritelist-service",
-      "envFile": "${workspaceFolder}/Gestor_PeliculasYSeries_Microservicios/.env"
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }
