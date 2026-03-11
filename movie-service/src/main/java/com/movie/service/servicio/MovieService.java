@@ -1,8 +1,6 @@
 package com.movie.service.servicio;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -59,16 +57,11 @@ public class MovieService {
        Métodos nuevos (controller)
        =========================== */
 
-    /** Lista con paginación simple manteniendo tu ruta actual. */
+    /** Lista con paginación en base de datos (evita cargar todas las filas en memoria). */
     public List<Movie> getAll(int page, int size) {
-        List<Movie> all = movieRepository.findAll();
-        if (all.isEmpty()) return List.of();
-
-        int from = Math.max(0, page * size);
-        if (from >= all.size()) return List.of();
-
-        int to = Math.min(all.size(), from + size);
-        return new ArrayList<>(all.subList(from, to));
+        int safeSize = Math.max(1, Math.min(size, 100));
+        Page<Movie> p = movieRepository.findAll(PageRequest.of(page, safeSize));
+        return p.getContent();
     }
 
     /** Obtiene o lanza 404. */
