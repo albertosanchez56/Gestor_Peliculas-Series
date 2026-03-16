@@ -128,10 +128,11 @@ public class MovieService {
         return movieRepository.searchAllFields(q.trim(), pageable);
     }
 
-    /** Sugerencias (autocomplete) limitado por size. */
+    /** Sugerencias (autocomplete) limitado por size (con tope máximo). */
     public List<Movie> searchByText(String q, int size) {
         if (q == null || q.isBlank()) return List.of();
-        Pageable pageable = PageRequest.of(0, size);
+        int safeSize = Math.max(1, Math.min(size, 50));
+        Pageable pageable = PageRequest.of(0, safeSize);
         return movieRepository.searchAllFields(q.trim(), pageable).getContent();
     }
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -96,16 +97,12 @@ public class GenreService {
     return result;
   }
 
-  /** Lista con paginación simple (manteniendo tu ruta actual). */
+  /** Lista con paginación en base de datos (manteniendo tu ruta actual). */
   public List<Genre> getAll(int page, int size) {
-    List<Genre> all = genreRepository.findAll();
-    if (all.isEmpty()) return List.of();
-
-    int from = Math.max(0, page * size);
-    if (from >= all.size()) return List.of();
-
-    int to = Math.min(all.size(), from + size);
-    return new ArrayList<>(all.subList(from, to));
+    int safeSize = Math.max(1, Math.min(size, 100));
+    Page<Genre> p = genreRepository.findAll(PageRequest.of(page, safeSize));
+    if (p.isEmpty()) return List.of();
+    return new ArrayList<>(p.getContent());
   }
 
   public Genre getByIdOrThrow(Long id) {
