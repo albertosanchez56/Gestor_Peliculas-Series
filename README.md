@@ -373,6 +373,8 @@ Gestor_PeliculasYSeries_Microservicios/
 ├── config-service3/          # Config Server
 ├── eureka-service3/          # Service Discovery
 ├── gateway-service3/         # API Gateway
+│   ├── src/main/resources/templates/   # LEGACY: HTML del gateway (antes del frontend Angular)
+│   └── src/main/resources/static/      # LEGACY: CSS/JS para esas páginas (no usado en el flujo actual)
 ├── user-service/             # Usuarios y auth
 ├── movie-service/            # Películas, directores, géneros, cast
 ├── review-service/           # Reseñas
@@ -381,6 +383,18 @@ Gestor_PeliculasYSeries_Microservicios/
 ├── docker-compose.yml        # Levantar todo con Docker Compose
 └── .env.docker.example       # Variables para Docker; copiar a .env
 ```
+
+---
+
+## Nota sobre el frontend legacy del Gateway
+
+Dentro de `gateway-service3` existe una carpeta `templates/` y recursos `static/` con páginas HTML/CSS/JS.  
+Esto corresponde a un **frontend inicial** que se estaba construyendo dentro del Gateway **antes** de migrar el frontend a **Angular**.
+
+- **Estado:** *legacy / no usado* en el flujo actual.
+- **Frontend oficial del proyecto:** el repositorio Angular (`Gestor_PeliculasYSerie_FrontEnd`).
+
+Se mantienen en el repo únicamente como referencia histórica. Si en el futuro quieres “limpiar” el proyecto, se pueden eliminar sin afectar al funcionamiento del backend ni del frontend Angular.
 
 ---
 
