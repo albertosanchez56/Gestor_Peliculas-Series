@@ -15,7 +15,12 @@ spring:
       globalcors:
         corsConfigurations:
           "[/**]":
-            allowedOrigins: "http://localhost:4200"
+            # En producción, configura CORS por variable de entorno con los orígenes permitidos.
+            # Ejemplos:
+            # - Linux/macOS: export CORS_ALLOWED_ORIGINS="https://tudominio.com"
+            # - Windows PS:  $env:CORS_ALLOWED_ORIGINS="https://tudominio.com"
+            # - Docker Compose: CORS_ALLOWED_ORIGINS=http://localhost:4200
+            allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
