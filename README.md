@@ -422,4 +422,8 @@ Incluye tests unitarios para `AuthService`, `AuthController` y flujo JWT.
 
 ## Licencia
 
-Proyecto de uso personal y educativo.
+Este repositorio (backend FilmScore / microservicios) se publica bajo la **licencia MIT**. El texto completo está en [`LICENSE`](./LICENSE) en la raíz de **este** repositorio.
+
+> El frontend Angular vive en otro repositorio; allí tiene su propio archivo `LICENSE` en la raíz.
+
+Uso personal, educativo y según los términos de la licencia.
